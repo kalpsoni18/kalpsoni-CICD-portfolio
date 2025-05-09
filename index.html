@@ -1,0 +1,131 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalp Soni - Cloud & DevOps Engineer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Rubik:wght@400;700&family=Fira+Code:wght@400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Hero Section -->
+    <header id="home" class="section hero">
+        <h1>Kalp Soni</h1>
+        <p class="tagline">Cloud & DevOps Engineer | AWS Solutions Architect</p>
+        <a href="#about" class="btn">Learn More</a>
+    </header>
+
+    <!-- About Section -->
+    <section id="about" class="section about">
+        <h2>About Me</h2>
+        <p>
+            I'm Kalp Soni, a Cloud & DevOps Engineer with a passion for building scalable, secure, and efficient infrastructure.
+            With 7 months of experience at Backerhaus Veit, I specialize in AWS cloud solutions, DevOps practices, and security best practices.
+        </p>
+        <p>
+            My expertise includes designing AWS architectures, implementing Infrastructure as Code (IaC) with Terraform,
+            automating CI/CD pipelines using Jenkins, and enforcing security standards to protect cloud environments.
+        </p>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="section skills">
+        <h2>Skills</h2>
+        <ul class="skills-list">
+            <li><span class="icon aws"></span>AWS Solutions Architect</li>
+            <li><span class="icon terraform"></span>Terraform (IaC)</li>
+            <li><span class="icon jenkins"></span>Jenkins (CI/CD)</li>
+            <li><span class="icon cicd"></span>CI/CD Pipelines</li>
+            <li><span class="icon security"></span>Cloud Security</li>
+            <li><span class="icon linux"></span>Linux Administration</li>
+        </ul>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="section projects">
+        <h2>Projects</h2>
+        <div class="project-card">
+            <h3>Terraform IaC for AWS</h3>
+            <p class="code-snippet">
+                <code>resource "aws_vpc" "main" { cidr_block = "10.0.0.0/16" }</code>
+            </p>
+            <p>Designed and deployed a secure VPC with Terraform, including subnets, security groups, and IAM roles.</p>
+        </div>
+        <div class="project-card">
+            <h3>Jenkins CI/CD Pipeline</h3>
+            <p>Built an automated CI/CD pipeline with Jenkins for a microservices application, integrating with Git and Docker.</p>
+        </div>
+        <div class="project-card">
+            <h3>AWS Architecture Diagram</h3>
+            <p>Created a highly available web application architecture using EC2, RDS, and ELB, documented with AWS diagrams.</p>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section contact">
+        <h2>Contact</h2>
+        <form id="contact-form">
+            <input type="text" name="name" placeholder="Your Name" required>
+            <input type="email" name="email" placeholder="Your Email" required>
+            <textarea name="message" placeholder="Your Message" required></textarea>
+            <button type="submit" class="btn">Send Message</button>
+        </form>
+        <div class="social-links">
+            <a href="https://linkedin.com/in/kalpsoni" target="_blank">LinkedIn</a>
+            <a href="https://github.com/kalpsoni" target="_blank">GitHub</a>
+        </div>
+    </section>
+
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#skills">Skills</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <script src="script.js"></script>
+</body>
+</html>
