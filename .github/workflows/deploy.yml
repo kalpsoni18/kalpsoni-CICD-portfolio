@@ -12,6 +12,21 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      # 🐛 Debug Step 1 — List all files in repo root
+      - name: Debug - List root directory
+        run: ls -la
+
+      # 🐛 Debug Step 2 — List contents of website directory
+      - name: Debug - List website directory
+        run: ls -la website
+
+      # 🐛 Debug Step 3 — Echo SOURCE_DIR env variable value
+      - name: Debug - Echo SOURCE_DIR
+        run: echo "SOURCE_DIR=$SOURCE_DIR"
+        env:
+          SOURCE_DIR: ${{ env.SOURCE_DIR }}
+
+      # 🚀 Your existing S3 sync step
       - name: Sync Files to S3
         uses: jakejarvis/s3-sync-action@master
         with:
@@ -21,6 +36,4 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
-          SOURCE_DIR: 'website'  # Change if your files are in a different directory
-
-      
+          SOURCE_DIR: 'website'
