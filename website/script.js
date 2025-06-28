@@ -11,6 +11,10 @@ const navLinks = document.getElementById('navLinks');
 const navLinksItems = document.querySelectorAll('.nav-links ul li a');
 const contactForm = document.getElementById('contactForm');
 
+
+// API Configuration
+const API_URL = 'https://r7kjg1upkg.execute-api.us-east-2.amazonaws.com/prod/contact'; 
+
 // Navbar functionality
 hamburger.addEventListener('click', () => {
     navLinks.classList.toggle('active');
@@ -38,30 +42,125 @@ window.addEventListener('scroll', () => {
     }
 });
 
-// Form submission handler
+// Enhanced form submission handler with AWS API integration
 if (contactForm) {
-    contactForm.addEventListener('submit', (e) => {
+    contactForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
+        // Show loading state
+        const submitButton = contactForm.querySelector('button[type="submit"]');
+        const originalText = submitButton.textContent;
+        submitButton.textContent = 'Sending...';
+        submitButton.disabled = true;
+        
         // Get form data
-        const name = document.getElementById('name').value;
-        const email = document.getElementById('email').value;
-        const message = document.getElementById('message').value;
+        const formData = {
+            name: document.getElementById('name').value.trim(),
+            email: document.getElementById('email').value.trim(),
+            message: document.getElementById('message').value.trim()
+        };
         
-        // Here you would typically send this data to a backend
-        // For now, we'll just log it and show a success message
-        console.log('Form submitted:', { name, email, message });
+        // Basic client-side validation
+        if (!formData.name || !formData.email || !formData.message) {
+            alert('Please fill in all fields.');
+            submitButton.textContent = originalText;
+            submitButton.disabled = false;
+            return;
+        }
         
-        // Display success message
-        const formElement = document.querySelector('.contact-form');
-        formElement.innerHTML = `
-            <div class="form-success">
-                <h3>Thank you for your message!</h3>
-                <p>I'll get back to you as soon as possible.</p>
-                <button class="btn btn-primary" onclick="resetContactForm()">Send Another Message</button>
-            </div>
-        `;
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.email)) {
+            alert('Please enter a valid email address.');
+            submitButton.textContent = originalText;
+            submitButton.disabled = false;
+            return;
+        }
+        
+        try {
+            // Submit to AWS API Gateway
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok && result.success) {
+                // Show success message
+                showSuccessMessage(result.message);
+                
+                // Log successful submission (optional - remove in production)
+                console.log('Form submitted successfully:', { 
+                    name: formData.name, 
+                    email: formData.email,
+                    timestamp: new Date().toISOString()
+                });
+            } else {
+                throw new Error(result.error || `Server error: ${response.status}`);
+            }
+            
+        } catch (error) {
+            console.error('Error sending message:', error);
+            
+            // Show user-friendly error message
+            showErrorMessage(error.message);
+            
+            // Reset button state
+            submitButton.textContent = originalText;
+            submitButton.disabled = false;
+        }
     });
+}
+
+// Show success message
+function showSuccessMessage(message) {
+    const formElement = document.querySelector('.contact-form');
+    formElement.innerHTML = `
+        <div class="form-success">
+            <div style="text-align: center; margin-bottom: 1rem;">
+                <span style="font-size: 3rem; color: #28a745;">✅</span>
+            </div>
+            <h3>Message Sent Successfully!</h3>
+            <p>${message || "Thank you for your message! I'll get back to you as soon as possible."}</p>
+            <button class="btn btn-primary" onclick="resetContactForm()">Send Another Message</button>
+        </div>
+    `;
+}
+
+// Show error message
+function showErrorMessage(errorMessage) {
+    const formElement = document.querySelector('.contact-form');
+    const currentForm = formElement.innerHTML;
+    
+    // Create error banner
+    const errorBanner = document.createElement('div');
+    errorBanner.className = 'error-banner';
+    errorBanner.style.cssText = `
+        background-color: #f8d7da;
+        color: #721c24;
+        padding: 0.75rem;
+        margin-bottom: 1rem;
+        border: 1px solid #f5c6cb;
+        border-radius: 4px;
+        font-size: 0.9rem;
+    `;
+    errorBanner.innerHTML = `
+        <strong>Error:</strong> ${errorMessage || 'Failed to send message. Please try again or contact me directly.'}
+    `;
+    
+    // Add error banner to top of form
+    formElement.insertBefore(errorBanner, formElement.firstChild);
+    
+    // Remove error banner after 5 seconds
+    setTimeout(() => {
+        if (errorBanner.parentNode) {
+            errorBanner.remove();
+        }
+    }, 5000);
 }
 
 // Reset contact form after submission
@@ -84,23 +183,71 @@ function resetContactForm() {
     `;
     
     // Re-attach the event listener
-    document.getElementById('contactForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const name = document.getElementById('name').value;
-        const email = document.getElementById('email').value;
-        const message = document.getElementById('message').value;
-        
-        console.log('Form submitted:', { name, email, message });
-        
-        const formElement = document.querySelector('.contact-form');
-        formElement.innerHTML = `
-            <div class="form-success">
-                <h3>Thank you for your message!</h3>
-                <p>I'll get back to you as soon as possible.</p>
-                <button class="btn btn-primary" onclick="resetContactForm()">Send Another Message</button>
-            </div>
-        `;
-    });
+    const newContactForm = document.getElementById('contactForm');
+    if (newContactForm) {
+        newContactForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Show loading state
+            const submitButton = newContactForm.querySelector('button[type="submit"]');
+            const originalText = submitButton.textContent;
+            submitButton.textContent = 'Sending...';
+            submitButton.disabled = true;
+            
+            // Get form data
+            const formData = {
+                name: document.getElementById('name').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                message: document.getElementById('message').value.trim()
+            };
+            
+            // Basic validation
+            if (!formData.name || !formData.email || !formData.message) {
+                alert('Please fill in all fields.');
+                submitButton.textContent = originalText;
+                submitButton.disabled = false;
+                return;
+            }
+            
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(formData.email)) {
+                alert('Please enter a valid email address.');
+                submitButton.textContent = originalText;
+                submitButton.disabled = false;
+                return;
+            }
+            
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    showSuccessMessage(result.message);
+                    console.log('Form submitted successfully:', { 
+                        name: formData.name, 
+                        email: formData.email,
+                        timestamp: new Date().toISOString()
+                    });
+                } else {
+                    throw new Error(result.error || `Server error: ${response.status}`);
+                }
+                
+            } catch (error) {
+                console.error('Error sending message:', error);
+                showErrorMessage(error.message);
+                submitButton.textContent = originalText;
+                submitButton.disabled = false;
+            }
+        });
+    }
 }
 
 // Typing animation for the hero section (optional)
@@ -147,4 +294,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     window.addEventListener('scroll', highlightActiveSection);
+    
+    // Console log for debugging (remove in production)
+    console.log('Portfolio website loaded successfully');
+    console.log('API URL configured:', API_URL);
 });
