@@ -11,7 +11,6 @@ const navLinks = document.getElementById('navLinks');
 const navLinksItems = document.querySelectorAll('.nav-links ul li a');
 const contactForm = document.getElementById('contactForm');
 
-
 // API Configuration
 const API_URL = 'https://r7kjg1upkg.execute-api.us-east-2.amazonaws.com/prod/contact'; 
 
@@ -49,22 +48,29 @@ if (contactForm) {
         
         // Show loading state
         const submitButton = contactForm.querySelector('button[type="submit"]');
-        const originalText = submitButton.textContent;
-        submitButton.textContent = 'Sending...';
-        submitButton.disabled = true;
+        const originalText = submitButton?.textContent || 'Send Message';
+        if (submitButton) {
+            submitButton.textContent = 'Sending...';
+            submitButton.disabled = true;
+        }
         
-        // Get form data
+        // Get form data using FormData (safer method)
+        const formDataObj = new FormData(contactForm);
         const formData = {
-            name: document.getElementById('name').value.trim(),
-            email: document.getElementById('email').value.trim(),
-            message: document.getElementById('message').value.trim()
+            name: formDataObj.get('name')?.trim() || '',
+            email: formDataObj.get('email')?.trim() || '',
+            message: formDataObj.get('message')?.trim() || ''
         };
+        
+        console.log('Form data collected:', formData);
         
         // Basic client-side validation
         if (!formData.name || !formData.email || !formData.message) {
             alert('Please fill in all fields.');
-            submitButton.textContent = originalText;
-            submitButton.disabled = false;
+            if (submitButton) {
+                submitButton.textContent = originalText;
+                submitButton.disabled = false;
+            }
             return;
         }
         
@@ -72,12 +78,16 @@ if (contactForm) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(formData.email)) {
             alert('Please enter a valid email address.');
-            submitButton.textContent = originalText;
-            submitButton.disabled = false;
+            if (submitButton) {
+                submitButton.textContent = originalText;
+                submitButton.disabled = false;
+            }
             return;
         }
         
         try {
+            console.log('Sending to API:', API_URL);
+            
             // Submit to AWS API Gateway
             const response = await fetch(API_URL, {
                 method: 'POST',
@@ -87,13 +97,15 @@ if (contactForm) {
                 body: JSON.stringify(formData)
             });
             
+            console.log('API Response status:', response.status);
             const result = await response.json();
+            console.log('API Response data:', result);
             
             if (response.ok && result.success) {
                 // Show success message
                 showSuccessMessage(result.message);
                 
-                // Log successful submission (optional - remove in production)
+                // Log successful submission
                 console.log('Form submitted successfully:', { 
                     name: formData.name, 
                     email: formData.email,
@@ -110,8 +122,10 @@ if (contactForm) {
             showErrorMessage(error.message);
             
             // Reset button state
-            submitButton.textContent = originalText;
-            submitButton.disabled = false;
+            if (submitButton) {
+                submitButton.textContent = originalText;
+                submitButton.disabled = false;
+            }
         }
     });
 }
@@ -134,7 +148,6 @@ function showSuccessMessage(message) {
 // Show error message
 function showErrorMessage(errorMessage) {
     const formElement = document.querySelector('.contact-form');
-    const currentForm = formElement.innerHTML;
     
     // Create error banner
     const errorBanner = document.createElement('div');
@@ -182,7 +195,7 @@ function resetContactForm() {
         <button type="submit" class="btn btn-primary">Send Message</button>
     `;
     
-    // Re-attach the event listener
+    // Re-attach the event listener using the same safe FormData method
     const newContactForm = document.getElementById('contactForm');
     if (newContactForm) {
         newContactForm.addEventListener('submit', async (e) => {
@@ -190,22 +203,29 @@ function resetContactForm() {
             
             // Show loading state
             const submitButton = newContactForm.querySelector('button[type="submit"]');
-            const originalText = submitButton.textContent;
-            submitButton.textContent = 'Sending...';
-            submitButton.disabled = true;
+            const originalText = submitButton?.textContent || 'Send Message';
+            if (submitButton) {
+                submitButton.textContent = 'Sending...';
+                submitButton.disabled = true;
+            }
             
-            // Get form data
+            // Get form data using FormData (consistent with main handler)
+            const formDataObj = new FormData(newContactForm);
             const formData = {
-                name: document.getElementById('name').value.trim(),
-                email: document.getElementById('email').value.trim(),
-                message: document.getElementById('message').value.trim()
+                name: formDataObj.get('name')?.trim() || '',
+                email: formDataObj.get('email')?.trim() || '',
+                message: formDataObj.get('message')?.trim() || ''
             };
+            
+            console.log('Reset form data collected:', formData);
             
             // Basic validation
             if (!formData.name || !formData.email || !formData.message) {
                 alert('Please fill in all fields.');
-                submitButton.textContent = originalText;
-                submitButton.disabled = false;
+                if (submitButton) {
+                    submitButton.textContent = originalText;
+                    submitButton.disabled = false;
+                }
                 return;
             }
             
@@ -213,12 +233,16 @@ function resetContactForm() {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(formData.email)) {
                 alert('Please enter a valid email address.');
-                submitButton.textContent = originalText;
-                submitButton.disabled = false;
+                if (submitButton) {
+                    submitButton.textContent = originalText;
+                    submitButton.disabled = false;
+                }
                 return;
             }
             
             try {
+                console.log('Reset form sending to API:', API_URL);
+                
                 const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: {
@@ -227,11 +251,13 @@ function resetContactForm() {
                     body: JSON.stringify(formData)
                 });
                 
+                console.log('Reset form API Response status:', response.status);
                 const result = await response.json();
+                console.log('Reset form API Response data:', result);
                 
                 if (response.ok && result.success) {
                     showSuccessMessage(result.message);
-                    console.log('Form submitted successfully:', { 
+                    console.log('Reset form submitted successfully:', { 
                         name: formData.name, 
                         email: formData.email,
                         timestamp: new Date().toISOString()
@@ -241,16 +267,18 @@ function resetContactForm() {
                 }
                 
             } catch (error) {
-                console.error('Error sending message:', error);
+                console.error('Reset form error:', error);
                 showErrorMessage(error.message);
-                submitButton.textContent = originalText;
-                submitButton.disabled = false;
+                if (submitButton) {
+                    submitButton.textContent = originalText;
+                    submitButton.disabled = false;
+                }
             }
         });
     }
 }
 
-// Typing animation for the hero section (optional)
+// Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     // Add smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -295,7 +323,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     window.addEventListener('scroll', highlightActiveSection);
     
-    // Console log for debugging (remove in production)
+    // Console log for debugging
     console.log('Portfolio website loaded successfully');
     console.log('API URL configured:', API_URL);
+    console.log('Contact form found:', !!document.getElementById('contactForm'));
 });
