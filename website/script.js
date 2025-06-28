@@ -11,7 +11,7 @@ const navLinks = document.getElementById('navLinks');
 const navLinksItems = document.querySelectorAll('.nav-links ul li a');
 const contactForm = document.getElementById('contactForm');
 
-// API Configuration
+// API Configurations
 const API_URL = 'https://r7kjg1upkg.execute-api.us-east-2.amazonaws.com/prod/contact'; 
 
 // Navbar functionality
