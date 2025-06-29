@@ -34,6 +34,26 @@ const API_URL = 'https://r7kjg1upkg.execute-api.us-east-2.amazonaws.com/prod/con
 const startTime = Date.now();
 let formInteractions = 0;
 let mouseMovements = 0;
+let touchEvents = 0;
+let scrollEvents = 0;
+
+document.addEventListener('mousemove', () => {
+    mouseMovements++;
+});
+
+document.addEventListener('keyup', () => {
+    keyboardEvents++;
+});
+
+document.addEventListener('touchstart', () => {   // ADD THIS HERE
+    touchEvents++;
+});
+
+document.addEventListener('scroll', () => {       // ADD THIS HERE
+    scrollEvents++;
+});
+
+
 let keyboardEvents = 0;
 
 // Safe DOM element getters
@@ -211,11 +231,11 @@ function detectBot() {
         
         const checks = {
             timeCheck: timeSpent >= 5000,
-            mouseCheck: mouseMovements >= 5,
+            mouseCheck: (mouseMovements >= 5) || (touchEvents >= 3) || (scrollEvents >= 2) || (formInteractions >= 6),
             interactionCheck: formInteractions >= 3,
             keyboardCheck: keyboardEvents >= 2
         };
-        
+
         // Honeypot check with safety
         let honeypotCheck = true;
         try {
