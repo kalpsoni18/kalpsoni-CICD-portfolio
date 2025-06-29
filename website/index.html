@@ -12,6 +12,7 @@
 <meta http-equiv="X-Frame-Options" content="DENY">
 <meta http-equiv="X-XSS-Protection" content="1; mode=block">
 <meta name="referrer" content="strict-origin-when-cross-origin">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com cdnjs.cloudflare.com; font-src fonts.gstatic.com; img-src 'self' data:;">
 
 <!-- Prevent automated form submissions -->
 <meta name="form-protection" content="enabled">
@@ -315,6 +316,7 @@ resource "aws_instance" "web_server" {
                             <i class="fas fa-shield-alt"></i>
                         </div>
                     </div>
+
                     <div class="project-details">
                         <h3>Secure AWS Landing Zone</h3>
                         <div class="project-tags">
@@ -375,25 +377,30 @@ resource "aws_instance" "web_server" {
                 </div>
                 <div class="contact-form-container">
                     <form id="contactForm" class="contact-form">
-                        <div class="form-group">
-                            <label for="name">Name</label>
-                            <input type="text" id="name" name="name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" id="email" name="email" required>
-                        </div>
-<!-- Honeypot field - hidden from humans, visible to bots -->
-<div style="position: absolute; left: -9999px;">
-    <label for="website">Website (leave blank):</label>
-    <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
-</div>
-                        <div class="form-group">
-                            <label for="message">Message</label>
-                            <textarea id="message" name="message" rows="5" required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Send Message</button>
-                    </form>
+    <div class="form-group">
+        <label for="name">Name *</label>
+        <input type="text" id="name" name="name" required maxlength="100" 
+               pattern="[A-Za-z\s]{2,100}" title="Name should contain only letters and spaces, 2-100 characters">
+    </div>
+    <div class="form-group">
+        <label for="email">Email *</label>
+        <input type="email" id="email" name="email" required maxlength="100"
+               title="Please enter a valid email address">
+    </div>
+    <div class="form-group">
+        <label for="message">Message *</label>
+        <textarea id="message" name="message" rows="5" required 
+                  minlength="10" maxlength="2000" 
+                  placeholder="Please enter your message (10-2000 characters)"
+                  title="Message should be between 10 and 2000 characters"></textarea>
+    </div>
+    <!-- Enhanced Honeypot field - hidden from humans, visible to bots -->
+    <div style="position: absolute; left: -9999px; opacity: 0; pointer-events: none;">
+        <label for="website">Website (leave blank):</label>
+        <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+    </div>
+    <button type="submit" class="btn btn-primary">Send Message</button>
+</form>
                 </div>
             </div>
         </div>
@@ -412,6 +419,6 @@ resource "aws_instance" "web_server" {
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="script.js?v=2.0" defer></script>
 </body>
 </html>
