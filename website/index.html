@@ -383,6 +383,11 @@ resource "aws_instance" "web_server" {
                             <label for="email">Email</label>
                             <input type="email" id="email" name="email" required>
                         </div>
+<!-- Honeypot field - hidden from humans, visible to bots -->
+<div style="position: absolute; left: -9999px;">
+    <label for="website">Website (leave blank):</label>
+    <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+</div>
                         <div class="form-group">
                             <label for="message">Message</label>
                             <textarea id="message" name="message" rows="5" required></textarea>
