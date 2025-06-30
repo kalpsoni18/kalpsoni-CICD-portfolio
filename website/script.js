@@ -899,3 +899,14 @@ document.addEventListener('DOMContentLoaded', App.init);
 
 // Make FormManager.resetContactForm available globally
 window.resetContactForm = FormManager.resetContactForm;
+
+// Mobile test function
+window.openMobileTest = () => {
+    try {
+        window.open('mobile-test.html', '_blank', 'noopener,noreferrer');
+    } catch (error) {
+        console.error('Error opening mobile test:', error);
+        // Fallback: try to navigate to the test page
+        window.location.href = 'mobile-test.html';
+    }
+};
