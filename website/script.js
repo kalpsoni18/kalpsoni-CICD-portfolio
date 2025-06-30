@@ -537,7 +537,8 @@ const FormManager = {
                 
                 let response;
                 try {
-                    response = await fetch(CONFIG.API_URL, {
+                    // Mobile-specific fetch configuration
+                    const fetchOptions = {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -545,13 +546,27 @@ const FormManager = {
                         },
                         body: JSON.stringify(formData),
                         signal: controller.signal
-                    });
+                    };
+                    
+                    // Add mobile-specific headers if on mobile
+                    if (DeviceDetector.isMobile()) {
+                        fetchOptions.headers['X-Device-Type'] = 'mobile';
+                        fetchOptions.mode = 'cors';
+                        fetchOptions.credentials = 'omit';
+                        fetchOptions.cache = 'no-cache';
+                    }
+                    
+                    response = await fetch(CONFIG.API_URL, fetchOptions);
                 } catch (fetchError) {
                     clearTimeout(timeoutId);
                     if (fetchError.name === 'AbortError') {
                         throw new Error('Request timed out. Please check your connection and try again.');
                     } else if (fetchError.message.includes('Failed to fetch')) {
-                        throw new Error('Network error. Please check your internet connection.');
+                        if (DeviceDetector.isMobile()) {
+                            throw new Error('Mobile connection failed. Please check your data/WiFi and try again.');
+                        } else {
+                            throw new Error('Network error. Please check your internet connection.');
+                        }
                     } else {
                         throw new Error('Connection failed. Please try again.');
                     }
