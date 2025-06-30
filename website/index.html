@@ -3,22 +3,55 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Security & SEO Meta Tags -->
-<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
-<meta name="googlebot" content="index, follow">
-<meta name="format-detection" content="telephone=no">
-<meta http-equiv="X-Content-Type-Options" content="nosniff">
-<meta http-equiv="X-Frame-Options" content="DENY">
-<meta http-equiv="X-XSS-Protection" content="1; mode=block">
-<meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <!-- Enhanced Security & SEO Meta Tags -->
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+    <meta name="googlebot" content="index, follow">
+    <meta name="format-detection" content="telephone=no">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta name="theme-color" content="#FF9900">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Kalp Soni - Portfolio">
 
-<!-- Prevent automated form submissions -->
-<meta name="form-protection" content="enabled">
+    <!-- Prevent automated form submissions -->
+    <meta name="form-protection" content="enabled">
+
+    <!-- Performance optimizations -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://use.fontawesome.com">
 
     <title>Kalp Soni | Cloud & DevOps Engineer</title>
-    <link rel="stylesheet" href="styles.css?v=1.1">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="description" content="Cloud & DevOps Engineer specializing in AWS, Terraform, and CI/CD pipelines. Building scalable, secure infrastructure solutions.">
+    <meta name="keywords" content="DevOps, AWS, Cloud Engineer, Terraform, CI/CD, Infrastructure as Code">
+    <meta name="author" content="Kalp Soni">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.kalpsoni.com/">
+    <meta property="og:title" content="Kalp Soni | Cloud & DevOps Engineer">
+    <meta property="og:description" content="Cloud & DevOps Engineer specializing in AWS, Terraform, and CI/CD pipelines.">
+    <meta property="og:image" content="https://www.kalpsoni.com/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://www.kalpsoni.com/">
+    <meta property="twitter:title" content="Kalp Soni | Cloud & DevOps Engineer">
+    <meta property="twitter:description" content="Cloud & DevOps Engineer specializing in AWS, Terraform, and CI/CD pipelines.">
+    <meta property="twitter:image" content="https://www.kalpsoni.com/og-image.jpg">
+    
+    <!-- Favicon and app icons -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="apple-touch-icon" href="favicon.ico">
+    
+    <!-- Stylesheets with versioning for cache busting -->
+    <link rel="stylesheet" href="styles.css?v=1.2">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap">
 </head>
@@ -27,18 +60,18 @@
     <nav class="navbar">
         <div class="container">
             <div class="logo">
-                <a href="#home">KS</a>
+                <a href="#home" aria-label="Home">KS</a>
             </div>
             <div class="nav-links" id="navLinks">
                 <ul>
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#skills">Skills</a></li>
-                    <li><a href="#projects">Projects</a></li>
-                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="#home" aria-label="Home section">Home</a></li>
+                    <li><a href="#about" aria-label="About section">About</a></li>
+                    <li><a href="#skills" aria-label="Skills section">Skills</a></li>
+                    <li><a href="#projects" aria-label="Projects section">Projects</a></li>
+                    <li><a href="#contact" aria-label="Contact section">Contact</a></li>
                 </ul>
             </div>
-            <div class="hamburger" id="hamburger">
+            <div class="hamburger" id="hamburger" aria-label="Toggle navigation menu" role="button" tabindex="0">
                 <div class="bar"></div>
                 <div class="bar"></div>
                 <div class="bar"></div>
@@ -55,12 +88,12 @@
                 <h2>Cloud & DevOps Engineer</h2>
                 <p class="tagline">Building resilient, scalable infrastructure with AWS, Terraform, and modern DevOps practices</p>
                 <div class="hero-cta">
-                    <a href="#contact" class="btn btn-primary">Get In Touch</a>
-                    <a href="#projects" class="btn btn-secondary">View Projects</a>
+                    <a href="#contact" class="btn btn-primary" aria-label="Get in touch">Get In Touch</a>
+                    <a href="#projects" class="btn btn-secondary" aria-label="View projects">View Projects</a>
                 </div>
                 <div class="social-links">
-                    <a href="https://linkedin.com/in/" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
-                    <a href="https://github.com/" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+                    <a href="https://linkedin.com/in/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://github.com/" target="_blank" rel="noopener noreferrer" aria-label="GitHub profile"><i class="fab fa-github"></i></a>
                 </div>
             </div>
             <div class="hero-visual">
@@ -99,7 +132,7 @@ resource "aws_instance" "web_server" {
                 <div class="about-highlights">
                     <div class="highlight-item">
                         <div class="highlight-icon">
-                            <i class="fab fa-aws"></i>
+                            <i class="fab fa-aws" aria-hidden="true"></i>
                         </div>
                         <div class="highlight-details">
                             <h3>AWS Solution Architecture</h3>
@@ -108,7 +141,7 @@ resource "aws_instance" "web_server" {
                     </div>
                     <div class="highlight-item">
                         <div class="highlight-icon">
-                            <i class="fas fa-code-branch"></i>
+                            <i class="fas fa-code-branch" aria-hidden="true"></i>
                         </div>
                         <div class="highlight-details">
                             <h3>Infrastructure as Code</h3>
@@ -117,7 +150,7 @@ resource "aws_instance" "web_server" {
                     </div>
                     <div class="highlight-item">
                         <div class="highlight-icon">
-                            <i class="fas fa-infinity"></i>
+                            <i class="fas fa-infinity" aria-hidden="true"></i>
                         </div>
                         <div class="highlight-details">
                             <h3>CI/CD Pipelines</h3>
@@ -126,7 +159,7 @@ resource "aws_instance" "web_server" {
                     </div>
                     <div class="highlight-item">
                         <div class="highlight-icon">
-                            <i class="fas fa-shield-alt"></i>
+                            <i class="fas fa-shield-alt" aria-hidden="true"></i>
                         </div>
                         <div class="highlight-details">
                             <h3>Cloud Security</h3>
@@ -180,7 +213,7 @@ resource "aws_instance" "web_server" {
                     <h3>Cloud Platforms</h3>
                     <div class="skills-grid">
                         <div class="skill-item">
-                            <div class="skill-icon"><i class="fab fa-aws"></i></div>
+                            <div class="skill-icon"><i class="fab fa-aws" aria-hidden="true"></i></div>
                             <div class="skill-name">AWS</div>
                         </div>
                     </div>
@@ -190,11 +223,11 @@ resource "aws_instance" "web_server" {
                     <h3>Infrastructure as Code</h3>
                     <div class="skills-grid">
                         <div class="skill-item">
-                            <div class="skill-icon"><i class="fas fa-cube"></i></div>
+                            <div class="skill-icon"><i class="fas fa-cube" aria-hidden="true"></i></div>
                             <div class="skill-name">Terraform</div>
                         </div>
                         <div class="skill-item">
-                            <div class="skill-icon"><i class="fas fa-file-code"></i></div>
+                            <div class="skill-icon"><i class="fas fa-file-code" aria-hidden="true"></i></div>
                             <div class="skill-name">CloudFormation</div>
                         </div>
                     </div>
@@ -204,15 +237,15 @@ resource "aws_instance" "web_server" {
                     <h3>CI/CD & Automation</h3>
                     <div class="skills-grid">
                         <div class="skill-item">
-                            <div class="skill-icon"><i class="fab fa-jenkins"></i></div>
+                            <div class="skill-icon"><i class="fab fa-jenkins" aria-hidden="true"></i></div>
                             <div class="skill-name">Jenkins</div>
                         </div>
                         <div class="skill-item">
-                            <div class="skill-icon"><i class="fas fa-code-branch"></i></div>
+                            <div class="skill-icon"><i class="fas fa-code-branch" aria-hidden="true"></i></div>
                             <div class="skill-name">Git</div>
                         </div>
                         <div class="skill-item">
-                            <div class="skill-icon"><i class="fab fa-github-alt"></i></div>
+                            <div class="skill-icon"><i class="fab fa-github-alt" aria-hidden="true"></i></div>
                             <div class="skill-name">GitHub Actions</div>
                         </div>
                     </div>
@@ -222,11 +255,11 @@ resource "aws_instance" "web_server" {
                     <h3>Containerization</h3>
                     <div class="skills-grid">
                         <div class="skill-item">
-                            <div class="skill-icon"><i class="fab fa-docker"></i></div>
+                            <div class="skill-icon"><i class="fab fa-docker" aria-hidden="true"></i></div>
                             <div class="skill-name">Docker</div>
                         </div>
                         <div class="skill-item">
-                            <div class="skill-icon"><i class="fas fa-dharmachakra"></i></div>
+                            <div class="skill-icon"><i class="fas fa-dharmachakra" aria-hidden="true"></i></div>
                             <div class="skill-name">Kubernetes</div>
                         </div>
                     </div>
@@ -236,7 +269,7 @@ resource "aws_instance" "web_server" {
                     <h3>Operating Systems</h3>
                     <div class="skills-grid">
                         <div class="skill-item">
-                            <div class="skill-icon"><i class="fab fa-linux"></i></div>
+                            <div class="skill-icon"><i class="fab fa-linux" aria-hidden="true"></i></div>
                             <div class="skill-name">Linux</div>
                         </div>
                     </div>
@@ -246,11 +279,11 @@ resource "aws_instance" "web_server" {
                     <h3>Security</h3>
                     <div class="skills-grid">
                         <div class="skill-item">
-                            <div class="skill-icon"><i class="fas fa-shield-alt"></i></div>
+                            <div class="skill-icon"><i class="fas fa-shield-alt" aria-hidden="true"></i></div>
                             <div class="skill-name">AWS Security</div>
                         </div>
                         <div class="skill-item">
-                            <div class="skill-icon"><i class="fas fa-user-shield"></i></div>
+                            <div class="skill-icon"><i class="fas fa-user-shield" aria-hidden="true"></i></div>
                             <div class="skill-name">IAM</div>
                         </div>
                     </div>
@@ -270,7 +303,7 @@ resource "aws_instance" "web_server" {
                 <div class="project-card">
                     <div class="project-image">
                         <div class="project-icon">
-                            <i class="fas fa-cloud"></i>
+                            <i class="fas fa-cloud" aria-hidden="true"></i>
                         </div>
                     </div>
                     <div class="project-details">
@@ -282,8 +315,8 @@ resource "aws_instance" "web_server" {
                         </div>
                         <p>Designed and implemented a fault-tolerant multi-region architecture using AWS services and Terraform for automated deployment.</p>
                         <div class="project-links">
-                            <a href="#" target="_blank" class="btn btn-small">View Project</a>
-                            <a href="#" target="_blank" class="btn btn-small btn-secondary"><i class="fab fa-github"></i> Code</a>
+                            <a href="#" target="_blank" rel="noopener noreferrer" class="btn btn-small" aria-label="View AWS Multi-Region Architecture project">View Project</a>
+                            <a href="#" target="_blank" rel="noopener noreferrer" class="btn btn-small btn-secondary" aria-label="View project code on GitHub"><i class="fab fa-github" aria-hidden="true"></i> Code</a>
                         </div>
                     </div>
                 </div>
@@ -291,7 +324,7 @@ resource "aws_instance" "web_server" {
                 <div class="project-card">
                     <div class="project-image">
                         <div class="project-icon">
-                            <i class="fas fa-infinity"></i>
+                            <i class="fas fa-infinity" aria-hidden="true"></i>
                         </div>
                     </div>
                     <div class="project-details">
@@ -303,8 +336,8 @@ resource "aws_instance" "web_server" {
                         </div>
                         <p>Automated end-to-end CI/CD pipeline using Jenkins, Docker, and AWS for continuous testing and deployment.</p>
                         <div class="project-links">
-                            <a href="#" target="_blank" class="btn btn-small">View Project</a>
-                            <a href="#" target="_blank" class="btn btn-small btn-secondary"><i class="fab fa-github"></i> Code</a>
+                            <a href="#" target="_blank" rel="noopener noreferrer" class="btn btn-small" aria-label="View CI/CD Pipeline project">View Project</a>
+                            <a href="#" target="_blank" rel="noopener noreferrer" class="btn btn-small btn-secondary" aria-label="View project code on GitHub"><i class="fab fa-github" aria-hidden="true"></i> Code</a>
                         </div>
                     </div>
                 </div>
@@ -312,10 +345,9 @@ resource "aws_instance" "web_server" {
                 <div class="project-card">
                     <div class="project-image">
                         <div class="project-icon">
-                            <i class="fas fa-shield-alt"></i>
+                            <i class="fas fa-shield-alt" aria-hidden="true"></i>
                         </div>
                     </div>
-
                     <div class="project-details">
                         <h3>Secure AWS Landing Zone</h3>
                         <div class="project-tags">
@@ -325,8 +357,8 @@ resource "aws_instance" "web_server" {
                         </div>
                         <p>Implemented a secure AWS account structure with proper security controls, IAM roles, and compliance monitoring.</p>
                         <div class="project-links">
-                            <a href="#" target="_blank" class="btn btn-small">View Project</a>
-                            <a href="#" target="_blank" class="btn btn-small btn-secondary"><i class="fab fa-github"></i> Code</a>
+                            <a href="#" target="_blank" rel="noopener noreferrer" class="btn btn-small" aria-label="View Secure AWS Landing Zone project">View Project</a>
+                            <a href="#" target="_blank" rel="noopener noreferrer" class="btn btn-small btn-secondary" aria-label="View project code on GitHub"><i class="fab fa-github" aria-hidden="true"></i> Code</a>
                         </div>
                     </div>
                 </div>
@@ -347,127 +379,69 @@ resource "aws_instance" "web_server" {
                     <div class="contact-methods">
                         <div class="contact-method">
                             <div class="contact-icon">
-                                <i class="fas fa-envelope"></i>
+                                <i class="fas fa-envelope" aria-hidden="true"></i>
                             </div>
                             <div class="contact-details">
                                 <h3>Email</h3>
-                                <a href="mailto:kalp.soni@example.com">kalp.soni@example.com</a>
+                                <a href="mailto:kalp.soni@example.com" aria-label="Send email to kalp.soni@example.com">kalp.soni@example.com</a>
                             </div>
                         </div>
                         <div class="contact-method">
                             <div class="contact-icon">
-                                <i class="fab fa-linkedin"></i>
+                                <i class="fab fa-linkedin" aria-hidden="true"></i>
                             </div>
                             <div class="contact-details">
                                 <h3>LinkedIn</h3>
-                                <a href="https://linkedin.com/in/" target="_blank">linkedin.com/in/kalpsoni</a>
+                                <a href="https://linkedin.com/in/" target="_blank" rel="noopener noreferrer" aria-label="Visit LinkedIn profile">linkedin.com/in/kalpsoni</a>
                             </div>
                         </div>
                         <div class="contact-method">
                             <div class="contact-icon">
-                                <i class="fab fa-github"></i>
+                                <i class="fab fa-github" aria-hidden="true"></i>
                             </div>
                             <div class="contact-details">
                                 <h3>GitHub</h3>
-                                <a href="https://github.com/" target="_blank">github.com/kalpsoni</a>
+                                <a href="https://github.com/" target="_blank" rel="noopener noreferrer" aria-label="Visit GitHub profile">github.com/kalpsoni</a>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="contact-form-container">
-                    <form id="contactForm" class="contact-form">
-    <div class="form-group">
-        <label for="name">Name *</label>
-        <input type="text" id="name" name="name" required maxlength="100" 
-               pattern="[A-Za-z\s]{2,100}" title="Name should contain only letters and spaces, 2-100 characters">
-    </div>
-    <div class="form-group">
-        <label for="email">Email *</label>
-        <input type="email" id="email" name="email" required maxlength="100"
-               title="Please enter a valid email address">
-    </div>
-    <div class="form-group">
-        <label for="message">Message *</label>
-        <textarea id="message" name="message" rows="5" required 
-                  minlength="10" maxlength="2000" 
-                  placeholder="Please enter your message (10-2000 characters)"
-                  title="Message should be between 10 and 2000 characters"></textarea>
-    </div>
-    <!-- Enhanced Honeypot field - hidden from humans, visible to bots -->
-    <div style="position: absolute; left: -9999px; opacity: 0; pointer-events: none;">
-        <label for="website">Website (leave blank):</label>
-        <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
-    </div>
-    <button type="submit" class="btn btn-primary">Send Message</button>
-</form>
+                    <form id="contactForm" class="contact-form" novalidate>
+                        <div class="form-group">
+                            <label for="name">Name *</label>
+                            <input type="text" id="name" name="name" required maxlength="100" 
+                                   pattern="[A-Za-z\s]{2,100}" title="Name should contain only letters and spaces, 2-100 characters"
+                                   autocomplete="name" aria-describedby="name-help">
+                            <div id="name-help" class="sr-only">Enter your full name using only letters and spaces</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email *</label>
+                            <input type="email" id="email" name="email" required maxlength="100"
+                                   title="Please enter a valid email address" autocomplete="email"
+                                   aria-describedby="email-help">
+                            <div id="email-help" class="sr-only">Enter a valid email address</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message *</label>
+                            <textarea id="message" name="message" rows="5" required 
+                                      minlength="10" maxlength="2000" 
+                                      placeholder="Please enter your message (10-2000 characters)"
+                                      title="Message should be between 10 and 2000 characters"
+                                      aria-describedby="message-help"></textarea>
+                            <div id="message-help" class="sr-only">Enter your message (minimum 10 characters)</div>
+                        </div>
+                        <!-- Enhanced Honeypot field - hidden from humans, visible to bots -->
+                        <div style="position: absolute; left: -9999px; opacity: 0; pointer-events: none;">
+                            <label for="website">Website (leave blank):</label>
+                            <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+                        </div>
+                        <button type="submit" class="btn btn-primary" aria-label="Send message">Send Message</button>
+                    </form>
                 </div>
             </div>
         </div>
     </section>
-<!--Delete after test-->
-<!-- Add this temporarily to test mobile connection -->
-<div style="position: fixed; bottom: 10px; right: 10px; z-index: 9999;">
-    <button onclick="testMobileConnection()" style="background: #ff9900; color: white; padding: 10px; border: none; border-radius: 5px;">
-        Test Mobile API
-    </button>
-</div>
-<script>
-async function testMobileConnection() {
-    console.log('=== MOBILE CONNECTION TEST ===');
-    
-    // Test with complete required data
-    const testData = {
-        name: 'Mobile Test',
-        email: 'kalp.soni@gmail.com',
-        message: 'Testing mobile connectivity',
-        // Add required bot protection fields
-        formTime: 10000,
-        interactions: 5,
-        mouseMovements: 10,
-        keyboardEvents: 3,
-        touchEvents: 5,
-        scrollEvents: 3,
-        deviceType: 'mobile',
-        timestamp: new Date().toISOString(),
-        userAgent: navigator.userAgent,
-        screenResolution: `${window.screen.width}x${window.screen.height}`,
-        viewportSize: `${window.innerWidth}x${window.innerHeight}`
-    };
-    
-    try {
-        console.log('Testing with complete data:', testData);
-        
-        const response = await fetch('https://r7kjg1upkg.execute-api.us-east-2.amazonaws.com/prod/contact', {
-            method: 'POST',
-            mode: 'cors',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify(testData)
-        });
-        
-        console.log('Response status:', response.status);
-        
-        if (response.ok) {
-            const result = await response.json();
-            console.log('SUCCESS:', result);
-            alert('✅ Mobile API works!');
-        } else {
-            const errorText = await response.text();
-            console.log('FAILED:', response.status, errorText);
-            alert('❌ Mobile API failed: ' + response.status + ' - ' + errorText);
-        }
-        
-    } catch (error) {
-        console.error('ERROR:', error);
-        alert('❌ Mobile error: ' + error.message);
-    }
-}
-</script>
-
-
-<!--untill here-->
 
     <!-- Footer -->
     <footer class="footer">
@@ -475,13 +449,14 @@ async function testMobileConnection() {
             <div class="footer-content">
                 <p>&copy; 2025 Kalp Soni. All Rights Reserved.</p>
                 <div class="footer-social">
-                    <a href="https://linkedin.com/in/" target="_blank"><i class="fab fa-linkedin"></i></a>
-                    <a href="https://github.com/" target="_blank"><i class="fab fa-github"></i></a>
+                    <a href="https://linkedin.com/in/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile"><i class="fab fa-linkedin" aria-hidden="true"></i></a>
+                    <a href="https://github.com/" target="_blank" rel="noopener noreferrer" aria-label="GitHub profile"><i class="fab fa-github" aria-hidden="true"></i></a>
                 </div>
             </div>
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <!-- Scripts -->
+    <script src="script.js?v=1.2"></script>
 </body>
 </html>
