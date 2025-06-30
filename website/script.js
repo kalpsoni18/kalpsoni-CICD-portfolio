@@ -2,7 +2,7 @@
  * Portfolio Website JavaScript - Optimized Version
  * Kalp Soni - Cloud & DevOps Engineer
  * 
- * Optimized for performance, maintainability, and security
+ * Optimized for performance, maintainability, security, and mobile compatibility
  */
 
 // Configuration
@@ -15,19 +15,20 @@ const CONFIG = {
         HIGHLIGHT: 100
     },
     BOT_DETECTION: {
-        MIN_TIME: 5000,
-        MIN_MOUSE_MOVEMENTS: 5,
-        MIN_TOUCH_EVENTS: 3,
-        MIN_SCROLL_EVENTS: 2,
-        MIN_FORM_INTERACTIONS: 6,
-        MIN_KEYBOARD_EVENTS: 2
+        MIN_TIME: 3000,
+        MIN_MOUSE_MOVEMENTS: 3,
+        MIN_TOUCH_EVENTS: 2,
+        MIN_SCROLL_EVENTS: 1,
+        MIN_FORM_INTERACTIONS: 3,
+        MIN_KEYBOARD_EVENTS: 1
     },
     VALIDATION: {
         MAX_NAME_LENGTH: 100,
         MAX_EMAIL_LENGTH: 100,
         MAX_MESSAGE_LENGTH: 2000,
         MIN_MESSAGE_LENGTH: 10
-    }
+    },
+    REQUEST_TIMEOUT: 15000
 };
 
 // Bot Protection State
@@ -38,6 +39,26 @@ const botState = {
     touchEvents: 0,
     scrollEvents: 0,
     keyboardEvents: 0
+};
+
+// Device detection
+const DeviceDetector = {
+    isMobile: () => {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS|FxiOS/i.test(navigator.userAgent) ||
+               window.innerWidth <= 768;
+    },
+    
+    getScreenResolution: () => {
+        return `${screen.width}x${screen.height}`;
+    },
+    
+    getViewportSize: () => {
+        return `${window.innerWidth}x${window.innerHeight}`;
+    },
+    
+    getDeviceType: () => {
+        return DeviceDetector.isMobile() ? 'mobile' : 'desktop';
+    }
 };
 
 // Utility Functions
@@ -130,39 +151,71 @@ const Utils = {
             console.error('Error validating email:', error);
             return false;
         }
+    },
+
+    // Network status check
+    isOnline: () => {
+        return navigator.onLine;
+    },
+
+    // Performance monitoring
+    measurePerformance: (name, fn) => {
+        const start = performance.now();
+        const result = fn();
+        const end = performance.now();
+        console.log(`Performance [${name}]: ${(end - start).toFixed(2)}ms`);
+        return result;
     }
 };
 
-// Event Tracking System
+// Event Tracking System with mobile optimization
 const EventTracker = {
     init: () => {
-        // Mouse movement tracking
+        const isMobile = DeviceDetector.isMobile();
+        
+        // Mouse movement tracking (throttled for performance)
         Utils.safeAddEventListener(document, 'mousemove', Utils.throttle(() => {
             botState.mouseMovements++;
         }, CONFIG.THROTTLE_DELAYS.MOUSE));
         
-        // Keyboard tracking
+        // Keyboard tracking (throttled for performance)
         Utils.safeAddEventListener(document, 'keyup', Utils.throttle(() => {
             botState.keyboardEvents++;
         }, CONFIG.THROTTLE_DELAYS.KEYBOARD));
         
-        // Touch tracking
+        // Touch tracking (mobile-specific)
         Utils.safeAddEventListener(document, 'touchstart', () => {
             botState.touchEvents++;
         });
         
-        // Scroll tracking
+        Utils.safeAddEventListener(document, 'touchend', () => {
+            botState.touchEvents++;
+        });
+        
+        // Scroll tracking (throttled for performance)
         Utils.safeAddEventListener(document, 'scroll', Utils.throttle(() => {
             botState.scrollEvents++;
         }, CONFIG.THROTTLE_DELAYS.SCROLL));
+        
+        // Network status tracking
+        Utils.safeAddEventListener(window, 'online', () => {
+            console.log('Network: Online');
+        });
+        
+        Utils.safeAddEventListener(window, 'offline', () => {
+            console.log('Network: Offline');
+        });
+        
+        console.log('Event tracking initialized for:', isMobile ? 'mobile' : 'desktop');
     }
 };
 
-// Bot Detection System
+// Bot Detection System with mobile optimization
 const BotDetection = {
     detect: () => {
         try {
             const timeSpent = Date.now() - botState.startTime;
+            const isMobile = DeviceDetector.isMobile();
             
             const checks = {
                 timeCheck: timeSpent >= CONFIG.BOT_DETECTION.MIN_TIME,
@@ -170,8 +223,8 @@ const BotDetection = {
                            (botState.touchEvents >= CONFIG.BOT_DETECTION.MIN_TOUCH_EVENTS) || 
                            (botState.scrollEvents >= CONFIG.BOT_DETECTION.MIN_SCROLL_EVENTS) || 
                            (botState.formInteractions >= CONFIG.BOT_DETECTION.MIN_FORM_INTERACTIONS),
-                interactionCheck: botState.formInteractions >= 3,
-                keyboardCheck: botState.keyboardEvents >= 2
+                interactionCheck: botState.formInteractions >= CONFIG.BOT_DETECTION.MIN_FORM_INTERACTIONS,
+                keyboardCheck: botState.keyboardEvents >= CONFIG.BOT_DETECTION.MIN_KEYBOARD_EVENTS
             };
 
             // Honeypot check
@@ -190,7 +243,13 @@ const BotDetection = {
                     timeSpent,
                     mouseMovements: botState.mouseMovements,
                     formInteractions: botState.formInteractions,
-                    keyboardEvents: botState.keyboardEvents
+                    keyboardEvents: botState.keyboardEvents,
+                    touchEvents: botState.touchEvents,
+                    scrollEvents: botState.scrollEvents,
+                    deviceType: DeviceDetector.getDeviceType(),
+                    screenResolution: DeviceDetector.getScreenResolution(),
+                    viewportSize: DeviceDetector.getViewportSize(),
+                    isMobile
                 }
             };
         } catch (error) {
@@ -198,7 +257,18 @@ const BotDetection = {
             return {
                 isHuman: false,
                 checks: {},
-                metrics: { timeSpent: 0, mouseMovements: 0, formInteractions: 0, keyboardEvents: 0 }
+                metrics: { 
+                    timeSpent: 0, 
+                    mouseMovements: 0, 
+                    formInteractions: 0, 
+                    keyboardEvents: 0,
+                    touchEvents: 0,
+                    scrollEvents: 0,
+                    deviceType: DeviceDetector.getDeviceType(),
+                    screenResolution: DeviceDetector.getScreenResolution(),
+                    viewportSize: DeviceDetector.getViewportSize(),
+                    isMobile: DeviceDetector.isMobile()
+                }
             };
         }
     }
@@ -221,12 +291,13 @@ const DOMElements = {
             hamburger: !!DOMElements.hamburger,
             navLinks: !!DOMElements.navLinks,
             navLinksItems: DOMElements.navLinksItems.length,
-            contactForm: !!DOMElements.contactForm
+            contactForm: !!DOMElements.contactForm,
+            deviceType: DeviceDetector.getDeviceType()
         });
     }
 };
 
-// Navigation System
+// Navigation System with mobile optimization
 const Navigation = {
     init: () => {
         // Hamburger menu functionality
@@ -254,7 +325,7 @@ const Navigation = {
         });
     },
 
-    // Scroll effects for navbar
+    // Scroll effects for navbar with performance optimization
     initScrollEffects: () => {
         Utils.safeAddEventListener(window, 'scroll', Utils.debounce(() => {
             try {
@@ -275,7 +346,7 @@ const Navigation = {
         }, 16));
     },
 
-    // Smooth scrolling
+    // Smooth scrolling with mobile optimization
     initSmoothScrolling: () => {
         try {
             // Add smooth scrolling for anchor links
@@ -289,15 +360,16 @@ const Navigation = {
                     const targetElement = document.querySelector(targetId);
                     
                     if (targetElement) {
+                        const offset = DeviceDetector.isMobile() ? 60 : 70;
                         window.scrollTo({
-                            top: targetElement.offsetTop - 70,
+                            top: targetElement.offsetTop - offset,
                             behavior: 'smooth'
                         });
                     }
                 });
             });
             
-            // Active section highlighting
+            // Active section highlighting with throttling
             const highlightActiveSection = Utils.debounce(() => {
                 try {
                     const sections = Utils.getElements('section[id]');
@@ -307,7 +379,9 @@ const Navigation = {
                     
                     sections.forEach(section => {
                         const sectionTop = section.offsetTop;
-                        if (window.scrollY >= sectionTop - 200) {
+                        const offset = DeviceDetector.isMobile() ? 150 : 200;
+                        
+                        if (window.scrollY >= sectionTop - offset) {
                             current = section.getAttribute('id');
                         }
                     });
@@ -331,7 +405,7 @@ const Navigation = {
     }
 };
 
-// Form Management System
+// Form Management System with enhanced mobile support
 const FormManager = {
     initFormTracking: () => {
         if (DOMElements.contactForm) {
@@ -342,6 +416,13 @@ const FormManager = {
             Utils.safeAddEventListener(DOMElements.contactForm, 'focus', () => {
                 botState.formInteractions++;
             }, true);
+            
+            // Mobile-specific form tracking
+            if (DeviceDetector.isMobile()) {
+                Utils.safeAddEventListener(DOMElements.contactForm, 'touchstart', () => {
+                    botState.formInteractions++;
+                });
+            }
             
             console.log('Form tracking initialized');
         }
@@ -360,6 +441,11 @@ const FormManager = {
             const originalText = submitButton?.textContent || 'Send Message';
             
             try {
+                // Check network status
+                if (!Utils.isOnline()) {
+                    throw new Error('No internet connection. Please check your network and try again.');
+                }
+                
                 // Bot Detection
                 const botDetection = BotDetection.detect();
                 
@@ -396,10 +482,16 @@ const FormManager = {
                     name: Utils.sanitizeInput(formDataObj.get('name') || ''),
                     email: Utils.sanitizeInput(formDataObj.get('email') || '').toLowerCase(),
                     message: Utils.sanitizeInput(formDataObj.get('message') || ''),
+                    // Enhanced bot detection metadata
                     formTime: botDetection.metrics.timeSpent,
                     interactions: botDetection.metrics.formInteractions,
                     mouseMovements: botDetection.metrics.mouseMovements,
                     keyboardEvents: botDetection.metrics.keyboardEvents,
+                    touchEvents: botDetection.metrics.touchEvents,
+                    scrollEvents: botDetection.metrics.scrollEvents,
+                    deviceType: botDetection.metrics.deviceType,
+                    screenResolution: botDetection.metrics.screenResolution,
+                    viewportSize: botDetection.metrics.viewportSize,
                     timestamp: new Date().toISOString(),
                     userAgent: navigator.userAgent
                 };
@@ -437,21 +529,37 @@ const FormManager = {
                     throw new Error('Message content appears to be spam.');
                 }
                 
-                // Submit to API
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 15000);
+                console.log('Sending to API:', CONFIG.API_URL);
                 
-                const response = await fetch(CONFIG.API_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'User-Agent': 'Portfolio-Contact-Form/2.0'
-                    },
-                    body: JSON.stringify(formData),
-                    signal: controller.signal
-                });
+                // Submit to API with enhanced error handling
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), CONFIG.REQUEST_TIMEOUT);
+                
+                let response;
+                try {
+                    response = await fetch(CONFIG.API_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'User-Agent': 'Portfolio-Contact-Form/3.0'
+                        },
+                        body: JSON.stringify(formData),
+                        signal: controller.signal
+                    });
+                } catch (fetchError) {
+                    clearTimeout(timeoutId);
+                    if (fetchError.name === 'AbortError') {
+                        throw new Error('Request timed out. Please check your connection and try again.');
+                    } else if (fetchError.message.includes('Failed to fetch')) {
+                        throw new Error('Network error. Please check your internet connection.');
+                    } else {
+                        throw new Error('Connection failed. Please try again.');
+                    }
+                }
                 
                 clearTimeout(timeoutId);
+                
+                console.log('API Response status:', response.status);
                 
                 if (!response.ok) {
                     const errorText = await response.text().catch(() => 'Unknown error');
@@ -468,15 +576,35 @@ const FormManager = {
                     }
                 }
                 
-                const result = await response.json();
+                let result;
+                try {
+                    result = await response.json();
+                } catch (jsonError) {
+                    console.error('Error parsing response:', jsonError);
+                    throw new Error('Invalid response from server.');
+                }
+                
+                console.log('API Response data:', result);
                 
                 if (result.success) {
+                    // Show success message
                     FormManager.showSuccessMessage(result.message);
+                    
+                    // Log successful submission
+                    console.log('Form submitted successfully:', { 
+                        name: formData.name, 
+                        email: formData.email,
+                        timestamp: formData.timestamp,
+                        deviceType: botDetection.metrics.deviceType,
+                        humanScore: botDetection.isHuman ? 'HUMAN' : 'SUSPICIOUS'
+                    });
                     
                     // Reset bot protection counters
                     botState.formInteractions = 0;
                     botState.mouseMovements = 0;
                     botState.keyboardEvents = 0;
+                    botState.touchEvents = 0;
+                    botState.scrollEvents = 0;
                     
                 } else {
                     throw new Error(result.error || result.message || 'Unknown server error');
@@ -484,7 +612,14 @@ const FormManager = {
                 
             } catch (error) {
                 console.error('Error sending message:', error);
-                FormManager.showErrorMessage(error.message || 'Failed to send message. Please try again.');
+                
+                let errorMessage = 'Failed to send message. Please try again.';
+                
+                if (error.message) {
+                    errorMessage = error.message;
+                }
+                
+                FormManager.showErrorMessage(errorMessage);
                 
             } finally {
                 // Reset button state
@@ -511,6 +646,7 @@ const FormManager = {
                     <p>${Utils.sanitizeInput(message) || "Thank you for your message! I'll get back to you as soon as possible."}</p>
                     <div style="font-size: 0.9rem; color: #6c757d; margin-top: 1rem;">
                         <p>✓ Message verified and delivered securely</p>
+                        <p>✓ Device: ${DeviceDetector.getDeviceType()}</p>
                     </div>
                     <button class="btn btn-primary" onclick="FormManager.resetContactForm()">Send Another Message</button>
                 </div>
@@ -603,6 +739,8 @@ const FormManager = {
             botState.formInteractions = 0;
             botState.mouseMovements = 0;
             botState.keyboardEvents = 0;
+            botState.touchEvents = 0;
+            botState.scrollEvents = 0;
             
             // Re-initialize form
             DOMElements.contactForm = Utils.getElement('contactForm');
@@ -638,6 +776,18 @@ const CSSAnimations = {
                 .error-banner {
                     animation: slideDown 0.3s ease-out;
                 }
+                
+                /* Mobile-specific optimizations */
+                @media (max-width: 768px) {
+                    .form-success {
+                        padding: 1rem;
+                    }
+                    
+                    .error-banner {
+                        font-size: 0.85rem;
+                        padding: 0.5rem;
+                    }
+                }
             `;
             document.head.appendChild(style);
         } catch (error) {
@@ -646,7 +796,7 @@ const CSSAnimations = {
     }
 };
 
-// Font Awesome Check
+// Font Awesome Check with mobile optimization
 const FontAwesomeCheck = {
     init: () => {
         const testIcon = document.createElement('i');
@@ -668,11 +818,33 @@ const FontAwesomeCheck = {
     }
 };
 
+// Performance monitoring
+const PerformanceMonitor = {
+    init: () => {
+        // Monitor page load performance
+        window.addEventListener('load', () => {
+            const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+            console.log(`Page load time: ${loadTime}ms`);
+        });
+        
+        // Monitor memory usage (if available)
+        if (performance.memory) {
+            setInterval(() => {
+                const memory = performance.memory;
+                console.log(`Memory usage: ${Math.round(memory.usedJSHeapSize / 1048576)}MB / ${Math.round(memory.totalJSHeapSize / 1048576)}MB`);
+            }, 30000); // Log every 30 seconds
+        }
+    }
+};
+
 // Main Application
 const App = {
     init: () => {
         try {
             console.log('🚀 Initializing portfolio website...');
+            console.log('📱 Device type:', DeviceDetector.getDeviceType());
+            console.log('🖥️ Screen resolution:', DeviceDetector.getScreenResolution());
+            console.log('📐 Viewport size:', DeviceDetector.getViewportSize());
             
             // Initialize all systems
             FontAwesomeCheck.init();
@@ -684,6 +856,7 @@ const App = {
             FormManager.initFormTracking();
             FormManager.initFormSubmission();
             CSSAnimations.add();
+            PerformanceMonitor.init();
             
             // Security check
             if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
@@ -695,6 +868,7 @@ const App = {
             console.log('🌐 API URL configured:', CONFIG.API_URL);
             console.log('📝 Contact form found:', !!DOMElements.contactForm);
             console.log('🤖 Bot protection active');
+            console.log('📱 Mobile optimization:', DeviceDetector.isMobile() ? 'enabled' : 'desktop mode');
             
         } catch (error) {
             console.error('❌ Error during initialization:', error);
