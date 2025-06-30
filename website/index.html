@@ -437,6 +437,16 @@ resource "aws_instance" "web_server" {
                             <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
                         </div>
                         <button type="submit" class="btn btn-primary" aria-label="Send message">Send Message</button>
+                        
+                        <!-- Mobile Test Button -->
+                        <div style="margin-top: 15px; text-align: center;">
+                            <button type="button" class="btn btn-secondary" onclick="openMobileTest()" style="font-size: 0.9rem; padding: 8px 16px;">
+                                <i class="fas fa-mobile-alt" aria-hidden="true"></i> Test Mobile Connection
+                            </button>
+                            <p style="font-size: 0.8rem; color: #666; margin-top: 8px;">
+                                Having trouble on mobile? Test your connection first.
+                            </p>
+                        </div>
                     </form>
                 </div>
             </div>
