@@ -406,6 +406,11 @@ resource "aws_instance" "web_server" {
     </section>
 <!--Delete after test-->
 <!-- Add this temporarily to test mobile connection -->
+<div style="position: fixed; bottom: 10px; right: 10px; z-index: 9999;">
+    <button onclick="testMobileConnection()" style="background: #ff9900; color: white; padding: 10px; border: none; border-radius: 5px;">
+        Test Mobile API
+    </button>
+</div>
 <script>
 async function testMobileConnection() {
     console.log('=== MOBILE CONNECTION TEST ===');
