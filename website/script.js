@@ -1,5 +1,5 @@
 /**
- * Portfolio Website JavaScript - FIXED VERSION
+ * Portfolio Website JavaScript
  * Kalp Soni - Cloud & DevOps Engineer
  * 
  * This file contains all the interactive functionality for the portfolio website
