@@ -28,9 +28,7 @@ const CONFIG = {
         MAX_MESSAGE_LENGTH: 2000,
         MIN_MESSAGE_LENGTH: 10
     },
-    REQUEST_TIMEOUT: 30000, // Increased timeout for mobile
-    MAX_RETRIES: 3,
-    RETRY_DELAY: 2000
+    REQUEST_TIMEOUT: 15000
 };
 
 // Bot Protection State
@@ -158,98 +156,6 @@ const Utils = {
     // Network status check
     isOnline: () => {
         return navigator.onLine;
-    },
-
-    // Enhanced network utilities for mobile
-    getConnectionInfo: () => {
-        const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-        if (connection) {
-            return {
-                effectiveType: connection.effectiveType || 'unknown',
-                downlink: connection.downlink || 'unknown',
-                rtt: connection.rtt || 'unknown',
-                saveData: connection.saveData || false
-            };
-        }
-        return null;
-    },
-
-    // Mobile-optimized fetch with retry logic
-    mobileFetch: async (url, options, retryCount = 0) => {
-        const isMobile = DeviceDetector.isMobile();
-        const connectionInfo = Utils.getConnectionInfo();
-        
-        console.log('Mobile fetch attempt:', {
-            attempt: retryCount + 1,
-            isMobile,
-            connectionInfo,
-            url: url.substring(0, 50) + '...'
-        });
-
-        try {
-            // Add mobile-specific headers
-            const mobileHeaders = {
-                ...options.headers,
-                'X-Device-Type': isMobile ? 'mobile' : 'desktop',
-                'X-Connection-Type': connectionInfo?.effectiveType || 'unknown',
-                'X-Request-Retry': retryCount.toString()
-            };
-
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), CONFIG.REQUEST_TIMEOUT);
-
-            const response = await fetch(url, {
-                ...options,
-                headers: mobileHeaders,
-                signal: controller.signal,
-                mode: 'cors',
-                credentials: 'omit'
-            });
-
-            clearTimeout(timeoutId);
-            return response;
-
-        } catch (error) {
-            clearTimeout(timeoutId);
-            
-            // Handle specific mobile network errors
-            if (error.name === 'AbortError') {
-                throw new Error('Request timed out. Mobile networks can be slower - please try again.');
-            } else if (error.message.includes('Failed to fetch')) {
-                if (isMobile) {
-                    throw new Error('Network connection failed. Please check your mobile data/WiFi and try again.');
-                } else {
-                    throw new Error('Network error. Please check your internet connection.');
-                }
-            } else if (error.message.includes('NetworkError')) {
-                throw new Error('Mobile network error. Please try again when you have a stable connection.');
-            } else {
-                throw error;
-            }
-        }
-    },
-
-    // Retry logic for mobile networks
-    retryFetch: async (url, options) => {
-        let lastError;
-        
-        for (let attempt = 0; attempt <= CONFIG.MAX_RETRIES; attempt++) {
-            try {
-                return await Utils.mobileFetch(url, options, attempt);
-            } catch (error) {
-                lastError = error;
-                console.log(`Fetch attempt ${attempt + 1} failed:`, error.message);
-                
-                if (attempt < CONFIG.MAX_RETRIES) {
-                    // Wait before retry, with exponential backoff for mobile
-                    const delay = CONFIG.RETRY_DELAY * Math.pow(2, attempt);
-                    console.log(`Retrying in ${delay}ms...`);
-                    await new Promise(resolve => setTimeout(resolve, delay));
-                }
-            }
-        }
-        
-        throw lastError;
     },
 
     // Performance monitoring
@@ -625,37 +531,33 @@ const FormManager = {
                 
                 console.log('Sending to API:', CONFIG.API_URL);
                 
-                // Submit to API with enhanced mobile error handling
+                // Submit to API with enhanced error handling
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), CONFIG.REQUEST_TIMEOUT);
+                
                 let response;
                 try {
-                    response = await Utils.retryFetch(CONFIG.API_URL, {
+                    response = await fetch(CONFIG.API_URL, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'User-Agent': 'Portfolio-Contact-Form/3.0',
-                            'Accept': 'application/json',
-                            'Cache-Control': 'no-cache'
+                            'User-Agent': 'Portfolio-Contact-Form/3.0'
                         },
-                        body: JSON.stringify(formData)
+                        body: JSON.stringify(formData),
+                        signal: controller.signal
                     });
                 } catch (fetchError) {
-                    console.error('Mobile fetch error:', fetchError);
-                    
-                    // Enhanced mobile-specific error messages
-                    if (DeviceDetector.isMobile()) {
-                        if (fetchError.message.includes('timeout')) {
-                            throw new Error('Mobile network is slow. Please try again when you have a better connection.');
-                        } else if (fetchError.message.includes('Failed to fetch')) {
-                            throw new Error('Mobile connection failed. Please check your data/WiFi and try again.');
-                        } else if (fetchError.message.includes('NetworkError')) {
-                            throw new Error('Mobile network error. Please try again when connection is stable.');
-                        } else {
-                            throw new Error('Mobile connection issue. Please try again.');
-                        }
+                    clearTimeout(timeoutId);
+                    if (fetchError.name === 'AbortError') {
+                        throw new Error('Request timed out. Please check your connection and try again.');
+                    } else if (fetchError.message.includes('Failed to fetch')) {
+                        throw new Error('Network error. Please check your internet connection.');
                     } else {
-                        throw fetchError;
+                        throw new Error('Connection failed. Please try again.');
                     }
                 }
+                
+                clearTimeout(timeoutId);
                 
                 console.log('API Response status:', response.status);
                 
@@ -997,14 +899,3 @@ document.addEventListener('DOMContentLoaded', App.init);
 
 // Make FormManager.resetContactForm available globally
 window.resetContactForm = FormManager.resetContactForm;
-
-// Mobile test function
-window.openMobileTest = () => {
-    try {
-        window.open('mobile-test.html', '_blank', 'noopener,noreferrer');
-    } catch (error) {
-        console.error('Error opening mobile test:', error);
-        // Fallback: try to navigate to the test page
-        window.location.href = 'mobile-test.html';
-    }
-};
