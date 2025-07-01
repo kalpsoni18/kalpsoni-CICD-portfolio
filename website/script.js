@@ -1,5 +1,5 @@
 /**
- * Portfolio Website JavaScript - Mobile-Optimized Version
+ * Portfolio Website JavaScript - Optimized Version
  * Kalp Soni - Cloud & DevOps Engineer
  * 
  * Optimized for performance, maintainability, security, and mobile compatibility
@@ -15,20 +15,20 @@ const CONFIG = {
         HIGHLIGHT: 100
     },
     BOT_DETECTION: {
-        MIN_TIME: 1000, // Reduced for mobile
-        MIN_MOUSE_MOVEMENTS: 1, // Reduced for mobile
-        MIN_TOUCH_EVENTS: 1, // Reduced for mobile
+        MIN_TIME: 3000,
+        MIN_MOUSE_MOVEMENTS: 3,
+        MIN_TOUCH_EVENTS: 2,
         MIN_SCROLL_EVENTS: 1,
-        MIN_FORM_INTERACTIONS: 1, // Reduced for mobile
+        MIN_FORM_INTERACTIONS: 3,
         MIN_KEYBOARD_EVENTS: 1
     },
     VALIDATION: {
         MAX_NAME_LENGTH: 100,
         MAX_EMAIL_LENGTH: 100,
         MAX_MESSAGE_LENGTH: 2000,
-        MIN_MESSAGE_LENGTH: 3 // Reduced for mobile
+        MIN_MESSAGE_LENGTH: 10
     },
-    REQUEST_TIMEOUT: 30000 // Increased for mobile
+    REQUEST_TIMEOUT: 15000
 };
 
 // Bot Protection State
@@ -41,35 +41,11 @@ const botState = {
     keyboardEvents: 0
 };
 
-// Enhanced Device detection
+// Device detection
 const DeviceDetector = {
     isMobile: () => {
         return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS|FxiOS/i.test(navigator.userAgent) ||
                window.innerWidth <= 768;
-    },
-    
-    isRealMobile: () => {
-        const userAgent = navigator.userAgent;
-        const platform = navigator.platform;
-        const maxTouchPoints = navigator.maxTouchPoints || 0;
-        
-        const mobileUserAgents = [
-            /Android/i, /iPhone/i, /iPad/i, /iPod/i, /BlackBerry/i,
-            /Windows Phone/i, /Opera Mini/i, /IEMobile/i, /Mobile/i,
-            /webOS/i, /Kindle/i, /Silk/i, /Mobile Safari/i
-        ];
-        
-        const mobilePlatforms = [
-            /iPhone/i, /iPad/i, /iPod/i, /Android/i, /BlackBerry/i,
-            /Windows Phone/i, /webOS/i, /Mobile/i
-        ];
-        
-        const hasMobileUserAgent = mobileUserAgents.some(pattern => pattern.test(userAgent));
-        const hasMobilePlatform = mobilePlatforms.some(pattern => pattern.test(platform));
-        const hasTouchSupport = maxTouchPoints > 0 || 'ontouchstart' in window;
-        const hasSmallScreen = window.screen.width <= 768 || window.innerWidth <= 768;
-        
-        return hasMobileUserAgent && (hasMobilePlatform || hasTouchSupport || hasSmallScreen);
     },
     
     getScreenResolution: () => {
@@ -82,18 +58,6 @@ const DeviceDetector = {
     
     getDeviceType: () => {
         return DeviceDetector.isMobile() ? 'mobile' : 'desktop';
-    },
-
-    getConnectionInfo: () => {
-        if (navigator.connection) {
-            return {
-                effectiveType: navigator.connection.effectiveType,
-                downlink: navigator.connection.downlink,
-                rtt: navigator.connection.rtt,
-                saveData: navigator.connection.saveData
-            };
-        }
-        return null;
     }
 };
 
@@ -252,46 +216,7 @@ const BotDetection = {
         try {
             const timeSpent = Date.now() - botState.startTime;
             const isMobile = DeviceDetector.isMobile();
-            const isRealMobile = DeviceDetector.isRealMobile();
             
-            // Very relaxed checks for mobile
-            if (isRealMobile) {
-                const checks = {
-                    timeCheck: timeSpent >= 500, // Very low for mobile
-                    mouseCheck: true, // Always pass for mobile
-                    interactionCheck: botState.formInteractions >= 1, // Very low
-                    keyboardCheck: true // Always pass for mobile
-                };
-
-                // Honeypot check
-                let honeypotCheck = true;
-                try {
-                    const honeypot = Utils.getElement('website');
-                    honeypotCheck = !honeypot || !honeypot.value;
-                } catch (error) {
-                    console.error('Error checking honeypot:', error);
-                }
-                
-                return {
-                    isHuman: checks.timeCheck && checks.interactionCheck && honeypotCheck,
-                    checks: { ...checks, honeypotCheck },
-                    metrics: {
-                        timeSpent,
-                        mouseMovements: botState.mouseMovements,
-                        formInteractions: botState.formInteractions,
-                        keyboardEvents: botState.keyboardEvents,
-                        touchEvents: botState.touchEvents,
-                        scrollEvents: botState.scrollEvents,
-                        deviceType: 'mobile',
-                        screenResolution: DeviceDetector.getScreenResolution(),
-                        viewportSize: DeviceDetector.getViewportSize(),
-                        isMobile: true,
-                        isRealMobile: true
-                    }
-                };
-            }
-            
-            // Regular checks for desktop
             const checks = {
                 timeCheck: timeSpent >= CONFIG.BOT_DETECTION.MIN_TIME,
                 mouseCheck: (botState.mouseMovements >= CONFIG.BOT_DETECTION.MIN_MOUSE_MOVEMENTS) || 
@@ -324,27 +249,25 @@ const BotDetection = {
                     deviceType: DeviceDetector.getDeviceType(),
                     screenResolution: DeviceDetector.getScreenResolution(),
                     viewportSize: DeviceDetector.getViewportSize(),
-                    isMobile: isMobile,
-                    isRealMobile: false
+                    isMobile
                 }
             };
         } catch (error) {
             console.error('Error in bot detection:', error);
             return {
-                isHuman: true, // Default to true on error for mobile compatibility
+                isHuman: false,
                 checks: {},
                 metrics: { 
-                    timeSpent: 5000, 
-                    mouseMovements: 3, 
-                    formInteractions: 3, 
-                    keyboardEvents: 3,
-                    touchEvents: 3,
-                    scrollEvents: 3,
+                    timeSpent: 0, 
+                    mouseMovements: 0, 
+                    formInteractions: 0, 
+                    keyboardEvents: 0,
+                    touchEvents: 0,
+                    scrollEvents: 0,
                     deviceType: DeviceDetector.getDeviceType(),
                     screenResolution: DeviceDetector.getScreenResolution(),
                     viewportSize: DeviceDetector.getViewportSize(),
-                    isMobile: DeviceDetector.isMobile(),
-                    isRealMobile: DeviceDetector.isRealMobile()
+                    isMobile: DeviceDetector.isMobile()
                 }
             };
         }
@@ -482,79 +405,6 @@ const Navigation = {
     }
 };
 
-// Enhanced Mobile Form Submission
-const MobileFormSubmit = {
-    async submit(formData, attempt = 1) {
-        const maxAttempts = 3;
-        const isRealMobile = DeviceDetector.isRealMobile();
-        
-        console.log(`Mobile submit attempt ${attempt}/${maxAttempts}`, {
-            isRealMobile,
-            connection: DeviceDetector.getConnectionInfo()
-        });
-
-        // Enhanced form data for mobile
-        const enhancedData = {
-            ...formData,
-            realMobile: isRealMobile,
-            submissionAttempt: attempt,
-            userAgent: navigator.userAgent,
-            platform: navigator.platform,
-            language: navigator.language,
-            connection: DeviceDetector.getConnectionInfo(),
-            timestamp: new Date().toISOString()
-        };
-
-        const timeout = isRealMobile ? 30000 : 15000;
-        
-        try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), timeout);
-
-            const response = await fetch(CONFIG.API_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                    ...(isRealMobile && {
-                        'X-Real-Mobile': 'true',
-                        'X-Mobile-Request': 'true'
-                    })
-                },
-                body: JSON.stringify(enhancedData),
-                signal: controller.signal,
-                mode: 'cors',
-                credentials: 'omit'
-            });
-
-            clearTimeout(timeoutId);
-
-            if (!response.ok) {
-                const errorText = await response.text().catch(() => `HTTP ${response.status}`);
-                throw new Error(`Server error: ${response.status} - ${errorText}`);
-            }
-
-            const result = await response.json();
-            console.log('Mobile submit success:', result);
-            return result;
-
-        } catch (error) {
-            console.error(`Mobile submit attempt ${attempt} failed:`, error);
-
-            // Retry for mobile devices
-            if (isRealMobile && attempt < maxAttempts) {
-                const delay = 2000 * attempt;
-                console.log(`Retrying in ${delay}ms...`);
-                await new Promise(resolve => setTimeout(resolve, delay));
-                return this.submit(formData, attempt + 1);
-            }
-
-            throw error;
-        }
-    }
-};
-
 // Form Management System with enhanced mobile support
 const FormManager = {
     initFormTracking: () => {
@@ -589,7 +439,6 @@ const FormManager = {
             
             const submitButton = DOMElements.contactForm.querySelector('button[type="submit"]');
             const originalText = submitButton?.textContent || 'Send Message';
-            const isRealMobile = DeviceDetector.isRealMobile();
             
             try {
                 // Check network status
@@ -597,74 +446,49 @@ const FormManager = {
                     throw new Error('No internet connection. Please check your network and try again.');
                 }
                 
+                // Bot Detection
+                const botDetection = BotDetection.detect();
+                
+                if (!botDetection.checks.timeCheck) {
+                    alert('Please take a moment to review your message.');
+                    return;
+                }
+                
+                if (!botDetection.checks.mouseCheck) {
+                    alert('Please interact with the page normally.');
+                    return;
+                }
+                
+                if (!botDetection.checks.interactionCheck) {
+                    alert('Please fill out the form naturally.');
+                    return;
+                }
+                
+                if (!botDetection.checks.honeypotCheck) {
+                    console.log('Bot detected: honeypot field filled');
+                    return;
+                }
+                
                 // Show loading state
                 if (submitButton) {
-                    submitButton.textContent = isRealMobile ? 'Sending... (Mobile)' : 'Sending...';
+                    submitButton.textContent = 'Sending...';
                     submitButton.disabled = true;
                     submitButton.style.opacity = '0.7';
                 }
                 
                 // Get and sanitize form data
                 const formDataObj = new FormData(DOMElements.contactForm);
-                const baseFormData = {
+                const formData = {
                     name: Utils.sanitizeInput(formDataObj.get('name') || ''),
                     email: Utils.sanitizeInput(formDataObj.get('email') || '').toLowerCase(),
-                    message: Utils.sanitizeInput(formDataObj.get('message') || '')
-                };
-                
-                // Validation
-                if (!baseFormData.name || baseFormData.name.length < 2) {
-                    throw new Error('Please enter a valid name (at least 2 characters).');
-                }
-                
-                if (!baseFormData.email || !Utils.validateEmail(baseFormData.email)) {
-                    throw new Error('Please enter a valid email address.');
-                }
-                
-                if (!baseFormData.message || baseFormData.message.length < CONFIG.VALIDATION.MIN_MESSAGE_LENGTH) {
-                    throw new Error(`Please enter a message (at least ${CONFIG.VALIDATION.MIN_MESSAGE_LENGTH} characters).`);
-                }
-                
-                if (baseFormData.name.length > CONFIG.VALIDATION.MAX_NAME_LENGTH) {
-                    throw new Error(`Name is too long (maximum ${CONFIG.VALIDATION.MAX_NAME_LENGTH} characters).`);
-                }
-                
-                if (baseFormData.message.length > CONFIG.VALIDATION.MAX_MESSAGE_LENGTH) {
-                    throw new Error(`Message is too long (maximum ${CONFIG.VALIDATION.MAX_MESSAGE_LENGTH} characters).`);
-                }
-                
-                // Bot Detection (relaxed for mobile)
-                const botDetection = BotDetection.detect();
-                
-                // Only check bot detection for desktop or if real mobile fails basic checks
-                if (!isRealMobile) {
-                    if (!botDetection.checks.timeCheck) {
-                        throw new Error('Please take a moment to review your message.');
-                    }
-                    
-                    if (!botDetection.checks.mouseCheck) {
-                        throw new Error('Please interact with the page normally.');
-                    }
-                    
-                    if (!botDetection.checks.interactionCheck) {
-                        throw new Error('Please fill out the form naturally.');
-                    }
-                }
-                
-                if (!botDetection.checks.honeypotCheck) {
-                    console.log('Bot detected: honeypot field filled');
-                    throw new Error('Please try again.');
-                }
-                
-                // Enhanced bot detection metadata with mobile-friendly defaults
-                const formData = {
-                    ...baseFormData,
+                    message: Utils.sanitizeInput(formDataObj.get('message') || ''),
+                    // Enhanced bot detection metadata
                     formTime: botDetection.metrics.timeSpent,
-                    interactions: Math.max(1, botDetection.metrics.formInteractions),
-                    mouseMovements: isRealMobile ? 0 : botDetection.metrics.mouseMovements,
-                    keyboardEvents: Math.max(1, botDetection.metrics.keyboardEvents),
-                    touchEvents: isRealMobile ? Math.max(1, botDetection.metrics.touchEvents) : botDetection.metrics.touchEvents,
-                    scrollEvents: Math.max(1, botDetection.metrics.scrollEvents),
+                    interactions: botDetection.metrics.formInteractions,
+                    mouseMovements: botDetection.metrics.mouseMovements,
+                    keyboardEvents: botDetection.metrics.keyboardEvents,
+                    touchEvents: botDetection.metrics.touchEvents,
+                    scrollEvents: botDetection.metrics.scrollEvents,
                     deviceType: botDetection.metrics.deviceType,
                     screenResolution: botDetection.metrics.screenResolution,
                     viewportSize: botDetection.metrics.viewportSize,
@@ -672,10 +496,95 @@ const FormManager = {
                     userAgent: navigator.userAgent
                 };
                 
+                // Validation
+                if (!formData.name || formData.name.length < 2) {
+                    throw new Error('Please enter a valid name (at least 2 characters).');
+                }
+                
+                if (!formData.email || !Utils.validateEmail(formData.email)) {
+                    throw new Error('Please enter a valid email address.');
+                }
+                
+                if (!formData.message || formData.message.length < CONFIG.VALIDATION.MIN_MESSAGE_LENGTH) {
+                    throw new Error(`Please enter a message (at least ${CONFIG.VALIDATION.MIN_MESSAGE_LENGTH} characters).`);
+                }
+                
+                if (formData.name.length > CONFIG.VALIDATION.MAX_NAME_LENGTH) {
+                    throw new Error(`Name is too long (maximum ${CONFIG.VALIDATION.MAX_NAME_LENGTH} characters).`);
+                }
+                
+                if (formData.message.length > CONFIG.VALIDATION.MAX_MESSAGE_LENGTH) {
+                    throw new Error(`Message is too long (maximum ${CONFIG.VALIDATION.MAX_MESSAGE_LENGTH} characters).`);
+                }
+                
+                // Spam detection
+                const spamWords = ['viagra', 'casino', 'lottery', 'winner', 'congratulations', 'click here', 'free money', 'make money fast'];
+                const messageWords = formData.message.toLowerCase().split(/\s+/);
+                const spamCount = spamWords.filter(spam => 
+                    messageWords.some(word => word.includes(spam))
+                ).length;
+                
+                if (spamCount >= 2) {
+                    console.log('Potential spam detected');
+                    throw new Error('Message content appears to be spam.');
+                }
+                
                 console.log('Sending to API:', CONFIG.API_URL);
                 
-                // Submit using mobile-optimized method
-                const result = await MobileFormSubmit.submit(formData);
+                // Submit to API with enhanced error handling
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), CONFIG.REQUEST_TIMEOUT);
+                
+                let response;
+                try {
+                    response = await fetch(CONFIG.API_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'User-Agent': 'Portfolio-Contact-Form/3.0'
+                        },
+                        body: JSON.stringify(formData),
+                        signal: controller.signal
+                    });
+                } catch (fetchError) {
+                    clearTimeout(timeoutId);
+                    if (fetchError.name === 'AbortError') {
+                        throw new Error('Request timed out. Please check your connection and try again.');
+                    } else if (fetchError.message.includes('Failed to fetch')) {
+                        throw new Error('Network error. Please check your internet connection.');
+                    } else {
+                        throw new Error('Connection failed. Please try again.');
+                    }
+                }
+                
+                clearTimeout(timeoutId);
+                
+                console.log('API Response status:', response.status);
+                
+                if (!response.ok) {
+                    const errorText = await response.text().catch(() => 'Unknown error');
+                    console.error('API Error Response:', errorText);
+                    
+                    if (response.status === 429) {
+                        throw new Error('Too many requests. Please wait a moment and try again.');
+                    } else if (response.status === 403) {
+                        throw new Error('Request blocked. Please try again later.');
+                    } else if (response.status >= 500) {
+                        throw new Error('Server error. Please try again in a few minutes.');
+                    } else {
+                        throw new Error(`Server error: ${response.status}`);
+                    }
+                }
+                
+                let result;
+                try {
+                    result = await response.json();
+                } catch (jsonError) {
+                    console.error('Error parsing response:', jsonError);
+                    throw new Error('Invalid response from server.');
+                }
+                
+                console.log('API Response data:', result);
                 
                 if (result.success) {
                     // Show success message
@@ -687,7 +596,7 @@ const FormManager = {
                         email: formData.email,
                         timestamp: formData.timestamp,
                         deviceType: botDetection.metrics.deviceType,
-                        isRealMobile: isRealMobile
+                        humanScore: botDetection.isHuman ? 'HUMAN' : 'SUSPICIOUS'
                     });
                     
                     // Reset bot protection counters
@@ -704,11 +613,10 @@ const FormManager = {
             } catch (error) {
                 console.error('Error sending message:', error);
                 
-                let errorMessage = error.message || 'Failed to send message. Please try again.';
+                let errorMessage = 'Failed to send message. Please try again.';
                 
-                // Add mobile-specific help
-                if (isRealMobile && (errorMessage.includes('Network') || errorMessage.includes('timeout') || errorMessage.includes('Failed to fetch'))) {
-                    errorMessage += '\n\nMobile troubleshooting: Try switching between WiFi and mobile data, or refresh the page and try again.';
+                if (error.message) {
+                    errorMessage = error.message;
                 }
                 
                 FormManager.showErrorMessage(errorMessage);
@@ -729,7 +637,6 @@ const FormManager = {
         if (!formElement) return;
         
         try {
-            const isRealMobile = DeviceDetector.isRealMobile();
             formElement.innerHTML = `
                 <div class="form-success">
                     <div style="text-align: center; margin-bottom: 1rem;">
@@ -739,8 +646,7 @@ const FormManager = {
                     <p>${Utils.sanitizeInput(message) || "Thank you for your message! I'll get back to you as soon as possible."}</p>
                     <div style="font-size: 0.9rem; color: #6c757d; margin-top: 1rem;">
                         <p>✓ Message verified and delivered securely</p>
-                        <p>✓ Device: ${isRealMobile ? 'Mobile (Optimized)' : DeviceDetector.getDeviceType()}</p>
-                        ${isRealMobile ? '<p>✓ Mobile-friendly submission successful</p>' : ''}
+                        <p>✓ Device: ${DeviceDetector.getDeviceType()}</p>
                     </div>
                     <button class="btn btn-primary" onclick="FormManager.resetContactForm()">Send Another Message</button>
                 </div>
@@ -761,8 +667,6 @@ const FormManager = {
                 existingError.remove();
             }
             
-            const isRealMobile = DeviceDetector.isRealMobile();
-            
             // Create error banner
             const errorBanner = document.createElement('div');
             errorBanner.className = 'error-banner';
@@ -775,17 +679,14 @@ const FormManager = {
                 border-radius: 4px;
                 font-size: 0.9rem;
                 animation: slideDown 0.3s ease-out;
-                white-space: pre-line;
             `;
-            
-            let displayMessage = Utils.sanitizeInput(errorMessage) || 'Failed to send message. Please try again or contact me directly.';
-            
-            errorBanner.innerHTML = `<strong>Error:</strong> ${displayMessage}`;
+            errorBanner.innerHTML = `
+                <strong>Error:</strong> ${Utils.sanitizeInput(errorMessage) || 'Failed to send message. Please try again or contact me directly.'}
+            `;
             
             formElement.insertBefore(errorBanner, formElement.firstChild);
             
-            // Remove error banner after 10 seconds for mobile, 7 for desktop
-            const timeout = isRealMobile ? 10000 : 7000;
+            // Remove error banner after 7 seconds
             setTimeout(() => {
                 if (errorBanner.parentNode) {
                     errorBanner.style.animation = 'slideUp 0.3s ease-out';
@@ -797,7 +698,7 @@ const FormManager = {
                         }
                     }, 300);
                 }
-            }, timeout);
+            }, 7000);
         } catch (error) {
             console.error('Error showing error message:', error);
         }
@@ -812,42 +713,26 @@ const FormManager = {
                 <div class="form-group">
                     <label for="name">Name *</label>
                     <input type="text" id="name" name="name" required maxlength="${CONFIG.VALIDATION.MAX_NAME_LENGTH}" 
-                           pattern="[A-Za-z\\s]{2,${CONFIG.VALIDATION.MAX_NAME_LENGTH}}" title="Name should contain only letters and spaces, 2-${CONFIG.VALIDATION.MAX_NAME_LENGTH} characters"
-                           autocomplete="name" aria-describedby="name-help">
-                    <div id="name-help" class="sr-only">Enter your full name using only letters and spaces</div>
+                           pattern="[A-Za-z\\s]{2,${CONFIG.VALIDATION.MAX_NAME_LENGTH}}" title="Name should contain only letters and spaces, 2-${CONFIG.VALIDATION.MAX_NAME_LENGTH} characters">
                 </div>
                 <div class="form-group">
                     <label for="email">Email *</label>
                     <input type="email" id="email" name="email" required maxlength="${CONFIG.VALIDATION.MAX_EMAIL_LENGTH}"
-                           title="Please enter a valid email address" autocomplete="email"
-                           aria-describedby="email-help">
-                    <div id="email-help" class="sr-only">Enter a valid email address</div>
+                           title="Please enter a valid email address">
                 </div>
                 <div class="form-group">
                     <label for="message">Message *</label>
                     <textarea id="message" name="message" rows="5" required 
                               minlength="${CONFIG.VALIDATION.MIN_MESSAGE_LENGTH}" maxlength="${CONFIG.VALIDATION.MAX_MESSAGE_LENGTH}" 
                               placeholder="Please enter your message (${CONFIG.VALIDATION.MIN_MESSAGE_LENGTH}-${CONFIG.VALIDATION.MAX_MESSAGE_LENGTH} characters)"
-                              title="Message should be between ${CONFIG.VALIDATION.MIN_MESSAGE_LENGTH} and ${CONFIG.VALIDATION.MAX_MESSAGE_LENGTH} characters"
-                              aria-describedby="message-help"></textarea>
-                    <div id="message-help" class="sr-only">Enter your message (minimum ${CONFIG.VALIDATION.MIN_MESSAGE_LENGTH} characters)</div>
+                              title="Message should be between ${CONFIG.VALIDATION.MIN_MESSAGE_LENGTH} and ${CONFIG.VALIDATION.MAX_MESSAGE_LENGTH} characters"></textarea>
                 </div>
-                <!-- Enhanced Honeypot field - hidden from humans, visible to bots -->
+                <!-- Honeypot field - hidden from humans, visible to bots -->
                 <div style="position: absolute; left: -9999px; opacity: 0; pointer-events: none;">
                     <label for="website">Website (leave blank):</label>
-                    <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+                    <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
                 </div>
-                <button type="submit" class="btn btn-primary" aria-label="Send message">Send Message</button>
-                
-                <!-- Mobile Test Button -->
-                <div style="margin-top: 15px; text-align: center;">
-                    <button type="button" class="btn btn-secondary" onclick="openMobileTest()" style="font-size: 0.9rem; padding: 8px 16px;">
-                        <i class="fas fa-mobile-alt" aria-hidden="true"></i> Test Mobile Connection
-                    </button>
-                    <p style="font-size: 0.8rem; color: #666; margin-top: 8px;">
-                        Having trouble on mobile? Test your connection first.
-                    </p>
-                </div>
+                <button type="submit" class="btn btn-primary">Send Message</button>
             `;
             
             // Reset bot protection counters
@@ -958,10 +843,8 @@ const App = {
         try {
             console.log('🚀 Initializing portfolio website...');
             console.log('📱 Device type:', DeviceDetector.getDeviceType());
-            console.log('📱 Real mobile:', DeviceDetector.isRealMobile());
             console.log('🖥️ Screen resolution:', DeviceDetector.getScreenResolution());
             console.log('📐 Viewport size:', DeviceDetector.getViewportSize());
-            console.log('🌐 Connection:', DeviceDetector.getConnectionInfo());
             
             // Initialize all systems
             FontAwesomeCheck.init();
@@ -984,9 +867,8 @@ const App = {
             console.log('🔒 Security features enabled');
             console.log('🌐 API URL configured:', CONFIG.API_URL);
             console.log('📝 Contact form found:', !!DOMElements.contactForm);
-            console.log('🤖 Bot protection active (mobile-optimized)');
+            console.log('🤖 Bot protection active');
             console.log('📱 Mobile optimization:', DeviceDetector.isMobile() ? 'enabled' : 'desktop mode');
-            console.log('📱 Real mobile device:', DeviceDetector.isRealMobile() ? 'YES' : 'NO');
             
         } catch (error) {
             console.error('❌ Error during initialization:', error);
@@ -1016,7 +898,6 @@ window.addEventListener('unhandledrejection', (event) => {
 document.addEventListener('DOMContentLoaded', App.init);
 
 // Make FormManager.resetContactForm available globally
-window.FormManager = FormManager;
 window.resetContactForm = FormManager.resetContactForm;
 
 // Mobile test function
@@ -1027,63 +908,5 @@ window.openMobileTest = () => {
         console.error('Error opening mobile test:', error);
         // Fallback: try to navigate to the test page
         window.location.href = 'mobile-test.html';
-    }
-};
-
-// Debug functions for mobile troubleshooting
-window.debugMobile = () => {
-    console.log('=== MOBILE DEBUG INFO ===');
-    console.log('Device Detection:', {
-        isMobile: DeviceDetector.isMobile(),
-        isRealMobile: DeviceDetector.isRealMobile(),
-        userAgent: navigator.userAgent,
-        platform: navigator.platform,
-        maxTouchPoints: navigator.maxTouchPoints,
-        touchSupport: 'ontouchstart' in window,
-        screenSize: DeviceDetector.getScreenResolution(),
-        viewportSize: DeviceDetector.getViewportSize(),
-        connection: DeviceDetector.getConnectionInfo()
-    });
-    console.log('Bot State:', botState);
-    console.log('Network:', navigator.onLine ? 'Online' : 'Offline');
-    console.log('API URL:', CONFIG.API_URL);
-    console.log('=========================');
-};
-
-// Emergency mobile form bypass (for extreme troubleshooting)
-window.emergencyMobileSubmit = async (name, email, message) => {
-    try {
-        console.log('🚨 Emergency mobile submit triggered');
-        const data = {
-            name: name || 'Emergency Test',
-            email: email || 'test@example.com',
-            message: message || 'Emergency mobile test submission',
-            realMobile: true,
-            emergencyMode: true,
-            formTime: 5000,
-            interactions: 5,
-            touchEvents: 5,
-            deviceType: 'mobile',
-            timestamp: new Date().toISOString()
-        };
-        
-        const response = await fetch(CONFIG.API_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Real-Mobile': 'true',
-                'X-Emergency': 'true'
-            },
-            body: JSON.stringify(data)
-        });
-        
-        const result = await response.json();
-        console.log('Emergency submit result:', result);
-        alert(result.success ? 'Emergency submit successful!' : 'Emergency submit failed: ' + result.error);
-        return result;
-    } catch (error) {
-        console.error('Emergency submit error:', error);
-        alert('Emergency submit error: ' + error.message);
-        throw error;
     }
 };
