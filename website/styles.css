@@ -667,6 +667,19 @@ section {
     background: var(--bg-panel);
 }
 
+.info-card.clickable {
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.2s ease, border-color 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.info-card.clickable:hover {
+    background: var(--bg-panel);
+    border: 1px solid var(--accent-red);
+}
+
 .info-icon {
     font-family: var(--font-mono);
     color: var(--accent-red);
