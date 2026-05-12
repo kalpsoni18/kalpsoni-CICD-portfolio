@@ -10,22 +10,23 @@
     --bg-base: #060606;
     --bg-panel: #0A0A0A;
     --bg-terminal: #0D0D0D;
-    
-    --accent-red: #FF4C3B; /* Vibrant pink/orange red from rig.ai */
+
+    --accent-red: #FF4C3B;
+    /* Vibrant pink/orange red from rig.ai */
     --accent-green: #2A9D8F;
-    
+
     --text-primary: #F0F0F0;
     --text-secondary: #888888;
     --text-muted: #444444;
-    
+
     --border-dim: #161616;
     --border-solid: #222222;
     --border-focus: #444444;
-    
+
     /* Typography */
     --font-heading: 'Inter', sans-serif;
     --font-mono: 'Fira Code', monospace;
-    
+
     /* Layout */
     --max-width: 1200px;
     --section-padding: 6rem 0;
@@ -61,7 +62,7 @@ body {
     width: 100vw;
     height: 100vh;
     z-index: -1;
-    background-image: 
+    background-image:
         linear-gradient(to right, var(--border-dim) 1px, transparent 1px),
         linear-gradient(to bottom, var(--border-dim) 1px, transparent 1px);
     background-size: 60px 60px;
@@ -84,7 +85,10 @@ body {
 /* Noise Texture Overlay */
 .noise-overlay {
     position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background-image: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)" opacity="0.06"/%3E%3C/svg%3E');
     pointer-events: none;
     z-index: 1;
@@ -93,7 +97,8 @@ body {
 /* Ethereal Shadow Container */
 #ethereal-shadow-container {
     position: absolute;
-    inset: -100px; /* equivalent to negative displacement scale */
+    inset: -100px;
+    /* equivalent to negative displacement scale */
     overflow: hidden;
     z-index: 1;
     pointer-events: none;
@@ -101,7 +106,8 @@ body {
 }
 
 .ethereal-shadow-layer {
-    background-color: rgba(255, 76, 59, 1); /* Rig.ai red hue */
+    background-color: rgba(255, 76, 59, 1);
+    /* Rig.ai red hue */
     -webkit-mask-image: url('https://framerusercontent.com/images/ceBGguIpUU8luwByxuQz79t7To.png');
     mask-image: url('https://framerusercontent.com/images/ceBGguIpUU8luwByxuQz79t7To.png');
     -webkit-mask-size: cover;
@@ -112,7 +118,8 @@ body {
     mask-position: center;
     width: 100%;
     height: 100%;
-    opacity: 0.6; /* Significantly increased opacity so the shadow is highly visible */
+    opacity: 0.8;
+    /* Significantly increased opacity so the shadow is highly visible */
 }
 
 /* Interactive Loader */
@@ -160,9 +167,17 @@ body {
     margin-right: 8px;
 }
 
-.loader-header .dot.red { background-color: #ff5f56; }
-.loader-header .dot.yellow { background-color: #ffbd2e; }
-.loader-header .dot.green { background-color: #27c93f; }
+.loader-header .dot.red {
+    background-color: #ff5f56;
+}
+
+.loader-header .dot.yellow {
+    background-color: #ffbd2e;
+}
+
+.loader-header .dot.green {
+    background-color: #27c93f;
+}
 
 .loader-title {
     margin-left: 15px;
@@ -204,22 +219,66 @@ body {
 }
 
 /* Creating indefinite, varying line animations */
-.line-1 { top: 12%; width: 180px; animation: slideRight 15s linear infinite; }
-.line-2 { top: 22%; width: 340px; animation: slideLeft 20s linear infinite 3s; }
-.line-3 { top: 35%; width: 90px;  animation: slideRight 18s linear infinite 7s; }
-.line-4 { top: 58%; width: 450px; animation: slideLeft 28s linear infinite 1s; }
-.line-5 { top: 72%; width: 220px; animation: slideRight 24s linear infinite 9s; }
-.line-6 { top: 88%; width: 120px; animation: slideLeft 16s linear infinite 5s; }
-.line-7 { top: 6%;  width: 280px; animation: slideRight 26s linear infinite 12s; }
+.line-1 {
+    top: 12%;
+    width: 180px;
+    animation: slideRight 15s linear infinite;
+}
+
+.line-2 {
+    top: 22%;
+    width: 340px;
+    animation: slideLeft 20s linear infinite 3s;
+}
+
+.line-3 {
+    top: 35%;
+    width: 90px;
+    animation: slideRight 18s linear infinite 7s;
+}
+
+.line-4 {
+    top: 58%;
+    width: 450px;
+    animation: slideLeft 28s linear infinite 1s;
+}
+
+.line-5 {
+    top: 72%;
+    width: 220px;
+    animation: slideRight 24s linear infinite 9s;
+}
+
+.line-6 {
+    top: 88%;
+    width: 120px;
+    animation: slideLeft 16s linear infinite 5s;
+}
+
+.line-7 {
+    top: 6%;
+    width: 280px;
+    animation: slideRight 26s linear infinite 12s;
+}
 
 @keyframes slideRight {
-    0% { transform: translateX(-150vw); }
-    100% { transform: translateX(150vw); }
+    0% {
+        transform: translateX(-150vw);
+    }
+
+    100% {
+        transform: translateX(150vw);
+    }
 }
 
 @keyframes slideLeft {
-    0% { transform: translateX(150vw); }
-    100% { transform: translateX(-150vw); }
+    0% {
+        transform: translateX(150vw);
+    }
+
+    100% {
+        transform: translateX(-150vw);
+    }
 }
 
 /* Container */
@@ -232,7 +291,12 @@ body {
 }
 
 /* Typography */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     font-family: var(--font-heading);
     font-weight: 500;
     line-height: 1.1;
@@ -353,7 +417,8 @@ nav .container {
     transition: color 0.2s ease;
 }
 
-.nav-links a:hover, .nav-links a.active {
+.nav-links a:hover,
+.nav-links a.active {
     color: var(--text-primary);
 }
 
@@ -389,6 +454,44 @@ nav .container {
     position: relative;
     z-index: 2;
     box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+}
+
+/* Resume Secure Mount Terminal */
+.resume-terminal {
+    background: var(--bg-terminal);
+    border: 1px solid var(--accent-red);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 3rem auto 0;
+    max-width: 600px;
+    text-align: left;
+    box-shadow: 0 0 15px rgba(255, 76, 59, 0.1);
+    transition: all 0.3s ease;
+}
+
+.resume-terminal:hover {
+    box-shadow: 0 0 25px rgba(255, 76, 59, 0.3);
+}
+
+.resume-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--border-solid);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+.resume-body {
+    padding: 1.5rem;
+    background: transparent;
+}
+
+.progress-bar-container {
+    overflow: hidden;
+    border-radius: 2px;
 }
 
 .terminal-header {
@@ -448,8 +551,13 @@ nav .container {
     color: var(--accent-red);
 }
 
-.term-text.success { color: var(--text-primary); }
-.term-text.highlight { color: var(--accent-red); }
+.term-text.success {
+    color: var(--text-primary);
+}
+
+.term-text.highlight {
+    color: var(--accent-red);
+}
 
 .cursor {
     display: inline-block;
@@ -461,12 +569,20 @@ nav .container {
 }
 
 @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
 }
 
 /* Connecting Nodes */
-.arch-nodes-left, .arch-nodes-right {
+.arch-nodes-left,
+.arch-nodes-right {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
@@ -476,8 +592,15 @@ nav .container {
     z-index: 1;
 }
 
-.arch-nodes-left { left: 0; text-align: right; }
-.arch-nodes-right { right: 0; text-align: left; }
+.arch-nodes-left {
+    left: 0;
+    text-align: right;
+}
+
+.arch-nodes-right {
+    right: 0;
+    text-align: left;
+}
 
 .arch-node {
     position: relative;
@@ -554,7 +677,9 @@ section {
     gap: 0.5rem;
 }
 
-.info-icon i { font-size: 1rem; }
+.info-icon i {
+    font-size: 1rem;
+}
 
 /* Experience Section Timeline - Minimalist */
 .exp-timeline {
@@ -667,26 +792,32 @@ footer {
 
 /* Responsive */
 @media (max-width: 992px) {
-    .arch-nodes-left, .arch-nodes-right {
-        display: none; /* Hide complex architecture nodes on smaller screens */
+
+    .arch-nodes-left,
+    .arch-nodes-right {
+        display: none;
+        /* Hide complex architecture nodes on smaller screens */
     }
+
     .info-grid {
         grid-template-columns: 1fr;
     }
 }
 
 @media (max-width: 768px) {
-    h1 { font-size: 2.5rem; }
-    
+    h1 {
+        font-size: 2.5rem;
+    }
+
     .nav-links {
         display: none;
     }
-    
+
     .footer-content {
         flex-direction: column;
         gap: 1rem;
     }
-    
+
     .footer-links a {
         margin: 0 0.75rem;
     }

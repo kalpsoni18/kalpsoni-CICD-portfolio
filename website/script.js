@@ -974,6 +974,55 @@ const PerformanceMonitor = {
     }
 };
 
+// Resume Terminal Interaction
+const ResumeManager = {
+    init: () => {
+        const btn = document.getElementById('download-resume-btn');
+        const loader = document.getElementById('resume-loader');
+        const progressBar = document.getElementById('resume-progress-bar');
+        const progressText = document.getElementById('resume-progress');
+
+        if (!btn || !loader || !progressBar || !progressText) return;
+
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            btn.style.display = 'none';
+            loader.style.display = 'block';
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.floor(Math.random() * 15) + 5;
+                if (progress > 100) progress = 100;
+                
+                progressBar.style.width = `${progress}%`;
+                progressText.textContent = `${progress}%`;
+                
+                if (progress === 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        progressText.textContent = 'ACCESS GRANTED';
+                        progressText.style.color = '#00ffcc';
+                        progressBar.style.background = '#00ffcc';
+                        
+                        setTimeout(() => {
+                            window.open('assets/docs/resume.pdf', '_blank');
+                            // Reset
+                            setTimeout(() => {
+                                btn.style.display = 'flex';
+                                loader.style.display = 'none';
+                                progressBar.style.width = '0%';
+                                progressText.textContent = '0%';
+                                progressText.style.color = '';
+                                progressBar.style.background = '';
+                            }, 1000);
+                        }, 500);
+                    }, 300);
+                }
+            }, 100);
+        });
+    }
+};
+
 // Main Application
 const App = {
     init: () => {
@@ -995,6 +1044,7 @@ const App = {
             CSSAnimations.add();
             InteractiveLoader.init();
             EtherealShadow.init();
+            ResumeManager.init();
             ScrollReveal.init();
             TypewriterEffect.init();
             PerformanceMonitor.init();
