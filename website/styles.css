@@ -681,7 +681,7 @@ section {
 }
 
 .info-card.clickable:hover .fa-arrow-right,
-.info-card.clickable:hover .fa-long-arrow-alt-right {
+.info-card.clickable:hover .fa-arrow-right-long {
     transform: translateX(10px);
 }
 
