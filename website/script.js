@@ -818,6 +818,31 @@ const FontAwesomeCheck = {
     }
 };
 
+// Scroll Reveal Animations
+const ScrollReveal = {
+    init: () => {
+        try {
+            const reveals = document.querySelectorAll('.reveal');
+            const options = {
+                threshold: 0.1,
+                rootMargin: "0px 0px -50px 0px"
+            };
+            const observer = new IntersectionObserver((entries, obs) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        obs.unobserve(entry.target);
+                    }
+                });
+            }, options);
+            reveals.forEach(el => observer.observe(el));
+            console.log('ScrollReveal initialized');
+        } catch (error) {
+            console.error('Error initializing ScrollReveal:', error);
+        }
+    }
+};
+
 // Performance monitoring
 const PerformanceMonitor = {
     init: () => {
@@ -856,6 +881,7 @@ const App = {
             FormManager.initFormTracking();
             FormManager.initFormSubmission();
             CSSAnimations.add();
+            ScrollReveal.init();
             PerformanceMonitor.init();
             
             // Security check
