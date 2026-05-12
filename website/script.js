@@ -826,7 +826,7 @@ const EtherealShadow = {
         
         let hueValue = 180;
         const animate = () => {
-            hueValue = (hueValue + 0.5) % 360;
+            hueValue = (hueValue + 2.5) % 360; // Increased speed
             feColorMatrix.setAttribute('values', hueValue.toString());
             requestAnimationFrame(animate);
         };
