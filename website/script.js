@@ -818,6 +818,35 @@ const FontAwesomeCheck = {
     }
 };
 
+// Typewriter Effect for Terminal
+const TypewriterEffect = {
+    init: () => {
+        try {
+            const el = document.getElementById('typewriter');
+            if (!el) return;
+            const text = 'deploy prod';
+            let i = 0;
+            
+            // Start empty
+            el.innerHTML = '<span class="cursor"></span>';
+            
+            // Wait 2 seconds before typing
+            setTimeout(() => {
+                const typingInterval = setInterval(() => {
+                    if (i < text.length) {
+                        el.innerHTML = text.substring(0, i + 1) + '<span class="cursor"></span>';
+                        i++;
+                    } else {
+                        clearInterval(typingInterval);
+                    }
+                }, 150);
+            }, 2000);
+        } catch (error) {
+            console.error('Error initializing TypewriterEffect:', error);
+        }
+    }
+};
+
 // Scroll Reveal Animations
 const ScrollReveal = {
     init: () => {
@@ -882,6 +911,7 @@ const App = {
             FormManager.initFormSubmission();
             CSSAnimations.add();
             ScrollReveal.init();
+            TypewriterEffect.init();
             PerformanceMonitor.init();
             
             // Security check
