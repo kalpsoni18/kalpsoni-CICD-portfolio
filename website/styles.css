@@ -680,6 +680,10 @@ section {
     border: 1px solid var(--accent-red);
 }
 
+.info-card.clickable:hover .fa-arrow-right {
+    transform: translateX(10px);
+}
+
 .info-icon {
     font-family: var(--font-mono);
     color: var(--accent-red);
