@@ -687,7 +687,7 @@ section {
 
 .github-more-card {
     background: var(--accent-red) !important;
-    color: #0a0a0a !important;
+    color: #ffffff !important;
 }
 
 .github-more-card:hover {
@@ -695,7 +695,8 @@ section {
 }
 
 .github-more-card h3 {
-    color: #0a0a0a !important;
+    color: #ffffff !important;
+    font-style: italic !important;
 }
 
 .info-icon {
