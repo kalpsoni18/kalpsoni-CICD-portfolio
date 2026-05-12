@@ -818,109 +818,66 @@ const FontAwesomeCheck = {
     }
 };
 
-// Three.js Dotted Surface Animation
-const DottedSurface = {
+// Ethereal Shadow SVG Animation
+const EtherealShadow = {
     init: () => {
-        try {
-            if (typeof THREE === 'undefined') {
-                console.warn('Three.js not loaded, skipping DottedSurface');
-                return;
-            }
+        const feColorMatrix = document.getElementById('ethereal-hue');
+        if (!feColorMatrix) return;
+        
+        let hueValue = 180;
+        const animate = () => {
+            hueValue = (hueValue + 0.5) % 360;
+            feColorMatrix.setAttribute('values', hueValue.toString());
+            requestAnimationFrame(animate);
+        };
+        animate();
+    }
+};
 
-            const container = document.getElementById('dotted-surface');
-            if (!container) return;
+// Interactive DevOps Loader
+const InteractiveLoader = {
+    snippets: [
+        `# AWS Multi-Region Infrastructure\nprovider "aws" {\n  region = "us-east-1"\n}\n\nresource "aws_vpc" "main" {\n  cidr_block = "10.0.0.0/16"\n  enable_dns_hostnames = true\n  enable_dns_support = true\n  tags = {\n    Name = "ks-production-vpc"\n  }\n}\n\nmodule "eks" {\n  source = "terraform-aws-modules/eks/aws"\n  cluster_name = "ks-cluster"\n  cluster_version = "1.27"\n  vpc_id = aws_vpc.main.id\n}\n\n# Provisioning infrastructure...`,
+        `apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: ks-core-api\n  namespace: production\nspec:\n  replicas: 3\n  selector:\n    matchLabels:\n      app: ks-core\n  template:\n    metadata:\n      labels:\n        app: ks-core\n    spec:\n      containers:\n      - name: api-server\n        image: kalpsoni/core-api:v2.4.1\n        resources:\n          limits:\n            cpu: "1"\n        ports:\n        - containerPort: 8080\n\n# Scaling pods... OK`,
+        `FROM node:18-alpine AS builder\nWORKDIR /app\nCOPY package*.json ./\nRUN npm ci\nCOPY . .\nRUN npm run build\n\nFROM node:18-alpine AS runner\nWORKDIR /app\nENV NODE_ENV production\nCOPY --from=builder /app/next.config.js ./\nCOPY --from=builder /app/public ./public\nCOPY --from=builder /app/.next/standalone ./\n\nEXPOSE 3000\nCMD ["node", "server.js"]\n\n# Building production image...`,
+        `name: KS-Prod-Deployment\non:\n  push:\n    branches: [ "main" ]\n\njobs:\n  deploy:\n    runs-on: ubuntu-latest\n    steps:\n    - uses: actions/checkout@v3\n    - name: Configure AWS credentials\n      uses: aws-actions/configure-aws-credentials@v2\n      with:\n        aws-access-key-id: \${{ secrets.AWS_KEY }}\n        aws-region: us-east-1\n    - name: Deploy to ECS\n      run: |\n        aws ecs update-service --cluster prod-cluster --force-new-deployment\n\n# Initiating CI/CD pipeline...`
+    ],
+    types: ['TERRAFORM', 'KUBERNETES', 'DOCKER', 'GITHUB_ACTIONS'],
+    init: () => {
+        const loader = document.getElementById('interactive-loader');
+        const codeElement = document.getElementById('loader-code');
+        const titleElement = document.querySelector('.loader-title');
+        if (!loader || !codeElement) return;
 
-            const SEPARATION = 150;
-            const AMOUNTX = 40;
-            const AMOUNTY = 60;
+        // Disable scrolling during load
+        document.body.style.overflow = 'hidden';
 
-            const scene = new THREE.Scene();
-            scene.fog = new THREE.Fog(0x060606, 2000, 10000);
-
-            const camera = new THREE.PerspectiveCamera(
-                60,
-                window.innerWidth / window.innerHeight,
-                1,
-                10000
-            );
-            camera.position.set(0, 355, 1220);
-
-            const renderer = new THREE.WebGLRenderer({
-                alpha: true,
-                antialias: true,
-            });
-            renderer.setPixelRatio(window.devicePixelRatio);
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setClearColor(0x000000, 0);
-
-            container.appendChild(renderer.domElement);
-
-            const positions = [];
-            const colors = [];
-
-            const geometry = new THREE.BufferGeometry();
-
-            for (let ix = 0; ix < AMOUNTX; ix++) {
-                for (let iy = 0; iy < AMOUNTY; iy++) {
-                    const x = ix * SEPARATION - (AMOUNTX * SEPARATION) / 2;
-                    const y = 0;
-                    const z = iy * SEPARATION - (AMOUNTY * SEPARATION) / 2;
-
-                    positions.push(x, y, z);
-                    colors.push(0.8, 0.8, 0.8); // Light gray dots
-                }
-            }
-
-            geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-            geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-
-            const material = new THREE.PointsMaterial({
-                size: 6,
-                vertexColors: true,
-                transparent: true,
-                opacity: 0.6,
-                sizeAttenuation: true,
-            });
-
-            const points = new THREE.Points(geometry, material);
-            scene.add(points);
-
-            let count = 0;
-
-            const animate = () => {
-                requestAnimationFrame(animate);
-
-                const positionAttribute = geometry.attributes.position;
-                const positionsArr = positionAttribute.array;
-
-                let i = 0;
-                for (let ix = 0; ix < AMOUNTX; ix++) {
-                    for (let iy = 0; iy < AMOUNTY; iy++) {
-                        const index = i * 3;
-                        positionsArr[index + 1] =
-                            Math.sin((ix + count) * 0.3) * 50 +
-                            Math.sin((iy + count) * 0.5) * 50;
-                        i++;
-                    }
-                }
-
-                positionAttribute.needsUpdate = true;
-                renderer.render(scene, camera);
-                count += 0.05;
-            };
-
-            const handleResize = () => {
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(window.innerWidth, window.innerHeight);
-            };
-
-            window.addEventListener('resize', handleResize);
-            animate();
-            console.log('DottedSurface initialized');
-        } catch (error) {
-            console.error('Error initializing DottedSurface:', error);
+        const randIndex = Math.floor(Math.random() * InteractiveLoader.snippets.length);
+        const snippet = InteractiveLoader.snippets[randIndex];
+        const type = InteractiveLoader.types[randIndex];
+        
+        if (titleElement) {
+            titleElement.textContent = `KS://INITIALIZING_${type}`;
         }
+
+        let i = 0;
+        // Fast typing effect
+        const typeInterval = setInterval(() => {
+            codeElement.textContent += snippet.charAt(i);
+            codeElement.scrollTop = codeElement.scrollHeight;
+            i++;
+            if (i >= snippet.length) {
+                clearInterval(typeInterval);
+                // Wait a bit, then fade out
+                setTimeout(() => {
+                    loader.classList.add('hidden');
+                    document.body.style.overflow = '';
+                    setTimeout(() => {
+                        loader.remove(); // Remove from DOM after fade
+                    }, 500);
+                }, 800);
+            }
+        }, 8); // extremely fast (8ms per character)
     }
 };
 
@@ -1016,7 +973,8 @@ const App = {
             FormManager.initFormTracking();
             FormManager.initFormSubmission();
             CSSAnimations.add();
-            DottedSurface.init();
+            InteractiveLoader.init();
+            EtherealShadow.init();
             ScrollReveal.init();
             TypewriterEffect.init();
             PerformanceMonitor.init();

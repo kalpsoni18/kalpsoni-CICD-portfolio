@@ -90,16 +90,98 @@ body {
     z-index: 1;
 }
 
-/* Dotted Surface Container */
-#dotted-surface {
+/* Ethereal Shadow Container */
+#ethereal-shadow-container {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    inset: -100px; /* equivalent to negative displacement scale */
+    overflow: hidden;
     z-index: 1;
     pointer-events: none;
-    opacity: 0.5; /* Subtle blend */
+    filter: url(#ethereal-shadow-filter) blur(4px);
+}
+
+.ethereal-shadow-layer {
+    background-color: rgba(255, 76, 59, 1); /* Rig.ai red hue */
+    -webkit-mask-image: url('https://framerusercontent.com/images/ceBGguIpUU8luwByxuQz79t7To.png');
+    mask-image: url('https://framerusercontent.com/images/ceBGguIpUU8luwByxuQz79t7To.png');
+    -webkit-mask-size: cover;
+    mask-size: cover;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    width: 100%;
+    height: 100%;
+    opacity: 0.15; /* Subtle blend with the dark background */
+}
+
+/* Interactive Loader */
+#interactive-loader {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background-color: var(--bg-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+}
+
+#interactive-loader.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.loader-terminal {
+    width: 90%;
+    max-width: 800px;
+    height: 60vh;
+    background-color: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 76, 59, 0.1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.loader-header {
+    background-color: #1a1a1a;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.loader-header .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.loader-header .dot.red { background-color: #ff5f56; }
+.loader-header .dot.yellow { background-color: #ffbd2e; }
+.loader-header .dot.green { background-color: #27c93f; }
+
+.loader-title {
+    margin-left: 15px;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+}
+
+#loader-code {
+    flex: 1;
+    padding: 20px;
+    margin: 0;
+    color: #27c93f;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    overflow-y: auto;
 }
 
 /* Animated Moving Lines */

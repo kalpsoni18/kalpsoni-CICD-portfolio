@@ -15,9 +15,63 @@
 </head>
 <body>
     
-    <!-- Blueprint Grid & Animated Lines Background -->
+    <!-- Interactive DevOps Loader -->
+    <div id="interactive-loader">
+        <div class="loader-terminal">
+            <div class="loader-header">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+                <span class="loader-title">KS://INITIALIZING_SYSTEM</span>
+            </div>
+            <pre id="loader-code"></pre>
+        </div>
+    </div>
+    <!-- Blueprint Grid & Backgrounds -->
     <div class="bg-blueprint">
-        <div id="dotted-surface"></div>
+        
+        <!-- Ethereal Shadow SVG & Container -->
+        <div id="ethereal-shadow-container">
+            <svg style="position: absolute; width: 0; height: 0;">
+                <defs>
+                    <filter id="ethereal-shadow-filter">
+                        <feTurbulence
+                            result="undulation"
+                            numOctaves="2"
+                            baseFrequency="0.001,0.004"
+                            seed="0"
+                            type="turbulence"
+                        />
+                        <feColorMatrix
+                            id="ethereal-hue"
+                            in="undulation"
+                            type="hueRotate"
+                            values="180"
+                        />
+                        <feColorMatrix
+                            in="dist"
+                            result="circulation"
+                            type="matrix"
+                            values="4 0 0 0 1  4 0 0 0 1  4 0 0 0 1  1 0 0 0 0"
+                        />
+                        <feDisplacementMap
+                            in="SourceGraphic"
+                            in2="circulation"
+                            scale="100"
+                            result="dist"
+                        />
+                        <feDisplacementMap
+                            in="dist"
+                            in2="undulation"
+                            scale="100"
+                            result="output"
+                        />
+                    </filter>
+                </defs>
+            </svg>
+            <div class="ethereal-shadow-layer"></div>
+        </div>
+
         <div class="noise-overlay"></div>
         <div class="moving-lines">
             <div class="line line-1"></div>
@@ -270,7 +324,6 @@
     </footer>
 
     <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
-    <script src="script.js?v=3.0"></script>
+    <script src="script.js?v=4.0"></script>
 </body>
 </html>
