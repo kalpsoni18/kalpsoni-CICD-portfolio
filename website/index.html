@@ -45,11 +45,12 @@
                         <feColorMatrix
                             id="ethereal-hue"
                             in="undulation"
+                            result="rotatedUndulation"
                             type="hueRotate"
                             values="180"
                         />
                         <feColorMatrix
-                            in="dist"
+                            in="rotatedUndulation"
                             result="circulation"
                             type="matrix"
                             values="4 0 0 0 1  4 0 0 0 1  4 0 0 0 1  1 0 0 0 0"
