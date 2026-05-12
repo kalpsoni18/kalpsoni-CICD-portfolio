@@ -680,8 +680,22 @@ section {
     border: 1px solid var(--accent-red);
 }
 
-.info-card.clickable:hover .fa-arrow-right {
+.info-card.clickable:hover .fa-arrow-right,
+.info-card.clickable:hover .fa-long-arrow-alt-right {
     transform: translateX(10px);
+}
+
+.github-more-card {
+    background: var(--accent-red) !important;
+    color: #0a0a0a !important;
+}
+
+.github-more-card:hover {
+    background: #ff5e4d !important;
+}
+
+.github-more-card h3 {
+    color: #0a0a0a !important;
 }
 
 .info-icon {
