@@ -836,42 +836,52 @@ const EtherealShadow = {
 
 // Interactive DevOps Loader
 const InteractiveLoader = {
-    snippets: [
-        `# AWS Multi-Region Infrastructure\nprovider "aws" {\n  region = "us-east-1"\n}\n\nresource "aws_vpc" "main" {\n  cidr_block = "10.0.0.0/16"\n  enable_dns_hostnames = true\n  enable_dns_support = true\n  tags = {\n    Name = "ks-production-vpc"\n  }\n}\n\nmodule "eks" {\n  source = "terraform-aws-modules/eks/aws"\n  cluster_name = "ks-cluster"\n  cluster_version = "1.27"\n  vpc_id = aws_vpc.main.id\n}\n\n# Provisioning infrastructure...`,
-        `apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: ks-core-api\n  namespace: production\nspec:\n  replicas: 3\n  selector:\n    matchLabels:\n      app: ks-core\n  template:\n    metadata:\n      labels:\n        app: ks-core\n    spec:\n      containers:\n      - name: api-server\n        image: kalpsoni/core-api:v2.4.1\n        resources:\n          limits:\n            cpu: "1"\n        ports:\n        - containerPort: 8080\n\n# Scaling pods... OK`,
-        `FROM node:18-alpine AS builder\nWORKDIR /app\nCOPY package*.json ./\nRUN npm ci\nCOPY . .\nRUN npm run build\n\nFROM node:18-alpine AS runner\nWORKDIR /app\nENV NODE_ENV production\nCOPY --from=builder /app/next.config.js ./\nCOPY --from=builder /app/public ./public\nCOPY --from=builder /app/.next/standalone ./\n\nEXPOSE 3000\nCMD ["node", "server.js"]\n\n# Building production image...`,
-        `name: KS-Prod-Deployment\non:\n  push:\n    branches: [ "main" ]\n\njobs:\n  deploy:\n    runs-on: ubuntu-latest\n    steps:\n    - uses: actions/checkout@v3\n    - name: Configure AWS credentials\n      uses: aws-actions/configure-aws-credentials@v2\n      with:\n        aws-access-key-id: \${{ secrets.AWS_KEY }}\n        aws-region: us-east-1\n    - name: Deploy to ECS\n      run: |\n        aws ecs update-service --cluster prod-cluster --force-new-deployment\n\n# Initiating CI/CD pipeline...`
-    ],
-    types: ['TERRAFORM', 'KUBERNETES', 'DOCKER', 'GITHUB_ACTIONS'],
+    snippet: `FROM node:18-alpine AS builder\nWORKDIR /app\nCOPY package*.json ./\nRUN npm ci\nCOPY . .\nRUN npm run build\n\nFROM node:18-alpine AS runner\nWORKDIR /app\nENV NODE_ENV production\nCOPY --from=builder /app/next.config.js ./\nCOPY --from=builder /app/public ./public\nCOPY --from=builder /app/.next/standalone ./\n\nEXPOSE 3000\nCMD ["node", "server.js"]\n\n# Building production image...`,
     init: () => {
         const loader = document.getElementById('interactive-loader');
         const codeElement = document.getElementById('loader-code');
         const titleElement = document.querySelector('.loader-title');
+        
         if (!loader || !codeElement) return;
 
-        // Disable scrolling during load
-        document.body.style.overflow = 'hidden';
+        // Hide all body children except the loader to ensure it's completely exclusive
+        const hiddenElements = [];
+        Array.from(document.body.children).forEach(child => {
+            if (child.id !== 'interactive-loader' && child.tagName !== 'SCRIPT') {
+                child.dataset.originalDisplay = getComputedStyle(child).display;
+                child.style.display = 'none';
+                hiddenElements.push(child);
+            }
+        });
 
-        const randIndex = Math.floor(Math.random() * InteractiveLoader.snippets.length);
-        const snippet = InteractiveLoader.snippets[randIndex];
-        const type = InteractiveLoader.types[randIndex];
+        document.body.style.backgroundColor = '#000000';
+        document.body.style.overflow = 'hidden';
         
         if (titleElement) {
-            titleElement.textContent = `KS://INITIALIZING_${type}`;
+            titleElement.textContent = `KS://INITIALIZING_DOCKER`;
         }
 
         let i = 0;
         // Fast typing effect
         const typeInterval = setInterval(() => {
-            codeElement.textContent += snippet.charAt(i);
+            codeElement.textContent += InteractiveLoader.snippet.charAt(i);
             codeElement.scrollTop = codeElement.scrollHeight;
             i++;
-            if (i >= snippet.length) {
+            if (i >= InteractiveLoader.snippet.length) {
                 clearInterval(typeInterval);
                 // Wait a bit, then fade out
                 setTimeout(() => {
-                    loader.classList.add('hidden');
+                    loader.style.opacity = '0';
+                    loader.style.visibility = 'hidden';
+                    
+                    // Restore body elements
+                    hiddenElements.forEach(child => {
+                        child.style.display = child.dataset.originalDisplay === 'none' ? '' : child.dataset.originalDisplay;
+                    });
+                    
+                    document.body.style.backgroundColor = '';
                     document.body.style.overflow = '';
+                    
                     setTimeout(() => {
                         loader.remove(); // Remove from DOM after fade
                     }, 500);
