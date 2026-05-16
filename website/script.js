@@ -818,21 +818,39 @@ const FontAwesomeCheck = {
     }
 };
 
-// Ethereal Shadow SVG Animation
-const EtherealShadow = {
+// Ethereal Shadow — now handled entirely by CSS animations
+// No JS animation loop needed (was causing 60fps DOM mutations)
+// --- Ethereal Background Animation ---
+const EtherealBackground = {
     init: () => {
-        const feColorMatrix = document.getElementById('ethereal-hue');
-        if (!feColorMatrix) return;
-        
-        let hueValue = 180;
-        const animate = () => {
-            hueValue = (hueValue + 2.5) % 360; // Increased speed
-            feColorMatrix.setAttribute('values', hueValue.toString());
-            requestAnimationFrame(animate);
-        };
-        animate();
+        // We use feTurbulence for the movement, no JS loop required for constant color.
+        // If we want hue rotation, we can re-enable this.
+        console.log('Ethereal background: SVG filter active.');
     }
 };
+
+
+// --- Smooth Scroll (Lenis) ---
+const ScrollManager = {
+    init: () => {
+        if (typeof Lenis === 'undefined') return;
+        
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            smoothWheel: true,
+            touchMultiplier: 2,
+        });
+
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+
+        requestAnimationFrame(raf);
+    }
+};
+
 
 // Interactive DevOps Loader
 const InteractiveLoader = {
@@ -1043,7 +1061,9 @@ const App = {
             FormManager.initFormSubmission();
             CSSAnimations.add();
             InteractiveLoader.init();
-            EtherealShadow.init();
+            EtherealBackground.init();
+            ScrollManager.init();
+
             ResumeManager.init();
             ScrollReveal.init();
             TypewriterEffect.init();

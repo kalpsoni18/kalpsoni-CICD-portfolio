@@ -54,7 +54,7 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-/* Grid Blueprint Background */
+/* Blueprint Grid & Background Layers */
 .bg-blueprint {
     position: fixed;
     top: 0;
@@ -62,64 +62,67 @@ body {
     width: 100vw;
     height: 100vh;
     z-index: -1;
-    background-image:
-        linear-gradient(to right, var(--border-dim) 1px, transparent 1px),
-        linear-gradient(to bottom, var(--border-dim) 1px, transparent 1px);
-    background-size: 60px 60px;
-    opacity: 0.6;
+    background-color: #000000;
 }
 
-/* Radial gradient to highlight the center / fade out edges */
+/* The actual grid layer on top of everything but under content */
+.bg-grid-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 6; /* On top of ethereal shadow (4) and noise (5) */
+    background-image: 
+        radial-gradient(circle at 1.5px 1.5px, rgba(255, 76, 59, 0.2) 1.5px, transparent 0);
+    background-size: 32px 32px;
+    pointer-events: none;
+    opacity: 0.8;
+}
+
+/* Subtle mask to keep the edges dark */
 .bg-blueprint::after {
     content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(circle at 50% 30%, transparent 0%, var(--bg-base) 80%);
-    z-index: 3;
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at 50% 40%, transparent 15%, #000000 85%);
+    z-index: 7;
     pointer-events: none;
+}
+
+
+/* Ethereal Shadow Container — High Performance CSS-only approach */
+#ethereal-shadow-container {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    z-index: 4;
+    pointer-events: none;
+    mix-blend-mode: plus-lighter;
+}
+
+.ethereal-shadow-layer {
+    position: absolute;
+    inset: -30%;
+    background: radial-gradient(
+        ellipse 65% 55% at 50% 40%,
+        rgba(255, 76, 59, 0.4) 0%,
+        rgba(255, 76, 59, 0.15) 35%,
+        rgba(180, 40, 30, 0.05) 65%,
+        transparent 85%
+    );
+    opacity: 0.9;
+    transform: translateZ(0); /* Hardware acceleration */
 }
 
 /* Noise Texture Overlay */
 .noise-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)" opacity="0.06"/%3E%3C/svg%3E');
+    position: fixed;
+    inset: 0;
+    background-image: url("https://framerusercontent.com/images/g0QcWrxr87K0ufOxIUFBakwYA8.png");
+    background-size: 240px;
+    background-repeat: repeat;
+    opacity: 0.12;
     pointer-events: none;
-    z-index: 1;
-}
-
-/* Ethereal Shadow Container */
-#ethereal-shadow-container {
-    position: absolute;
-    inset: -100px;
-    /* equivalent to negative displacement scale */
-    overflow: hidden;
-    z-index: 1;
-    pointer-events: none;
-    filter: url(#ethereal-shadow-filter) blur(4px);
-}
-
-.ethereal-shadow-layer {
-    background-color: rgba(255, 76, 59, 1);
-    /* Rig.ai red hue */
-    -webkit-mask-image: url('https://framerusercontent.com/images/ceBGguIpUU8luwByxuQz79t7To.png');
-    mask-image: url('https://framerusercontent.com/images/ceBGguIpUU8luwByxuQz79t7To.png');
-    -webkit-mask-size: cover;
-    mask-size: cover;
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-position: center;
-    mask-position: center;
-    width: 100%;
-    height: 100%;
-    opacity: 0.8;
-    /* Significantly increased opacity so the shadow is highly visible */
+    z-index: 5;
+    transform: translateZ(0);
 }
 
 /* Interactive Loader */
@@ -216,6 +219,8 @@ body {
     height: 6px;
     background-color: var(--accent-red);
     opacity: 0.9;
+    will-change: transform;
+    transform: translateZ(0);
 }
 
 /* Creating indefinite, varying line animations */
@@ -247,18 +252,6 @@ body {
     top: 72%;
     width: 220px;
     animation: slideRight 24s linear infinite 9s;
-}
-
-.line-6 {
-    top: 88%;
-    width: 120px;
-    animation: slideLeft 16s linear infinite 5s;
-}
-
-.line-7 {
-    top: 6%;
-    width: 280px;
-    animation: slideRight 26s linear infinite 12s;
 }
 
 @keyframes slideRight {

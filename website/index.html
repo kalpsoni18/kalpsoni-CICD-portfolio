@@ -12,6 +12,8 @@
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
     <link rel="stylesheet" href="styles.css?v=3.0">
+    <!-- Smooth Scroll -->
+    <script src="https://unpkg.com/lenis@1.1.9/dist/lenis.min.js"></script>
 </head>
 <body>
     
@@ -30,49 +32,11 @@
     <!-- Blueprint Grid & Backgrounds -->
     <div class="bg-blueprint">
         
-        <!-- Ethereal Shadow SVG & Container -->
+        <!-- Ethereal Shadow — Optimized CSS Approach -->
         <div id="ethereal-shadow-container">
-            <svg style="position: absolute; width: 0; height: 0;" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <filter id="ethereal-shadow-filter">
-                        <feTurbulence
-                            result="undulation"
-                            numOctaves="2"
-                            baseFrequency="0.001,0.004"
-                            seed="0"
-                            type="turbulence"
-                        />
-                        <feColorMatrix
-                            id="ethereal-hue"
-                            in="undulation"
-                            result="rotatedUndulation"
-                            type="hueRotate"
-                            values="180"
-                        />
-                        <feColorMatrix
-                            in="rotatedUndulation"
-                            result="circulation"
-                            type="matrix"
-                            values="4 0 0 0 1  4 0 0 0 1  4 0 0 0 1  1 0 0 0 0"
-                        />
-                        <feDisplacementMap
-                            in="SourceGraphic"
-                            in2="circulation"
-                            scale="100"
-                            result="dist"
-                        />
-                        <feDisplacementMap
-                            in="dist"
-                            in2="undulation"
-                            scale="100"
-                            result="output"
-                        />
-                    </filter>
-                </defs>
-            </svg>
             <div class="ethereal-shadow-layer"></div>
         </div>
-
+        <div class="bg-grid-overlay"></div>
         <div class="noise-overlay"></div>
         <div class="moving-lines">
             <div class="line line-1"></div>
@@ -80,8 +44,6 @@
             <div class="line line-3"></div>
             <div class="line line-4"></div>
             <div class="line line-5"></div>
-            <div class="line line-6"></div>
-            <div class="line line-7"></div>
         </div>
     </div>
 
